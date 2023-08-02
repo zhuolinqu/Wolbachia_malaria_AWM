@@ -5,9 +5,9 @@ format long
 %% Parameters
 Baseline_params_malaria;
 Baseline_params_stephensi;
-P.vw = 1; P.vu = 1-P.vw;
+P.vw = 0.95; P.vu = 1-P.vw;
 
-phiW_list = linspace(0.5,5,10);
+phiW_list = linspace(0.1,5,10);
 
 for iphi = 1:length(phiW_list)
     
@@ -38,7 +38,7 @@ for iphi = 1:length(phiW_list)
     %% Initial condition: Generate EE for malaria (no Wolbachia)
     SH0 = P.gH/P.muH-1; EH0 = 1; AH0 = 0; DH0 = 0;
     Ie0 = 0;
-    SU0 = P.Kf; EU0 = 0; IU0 = 0; SW0 = 0; EW0 = 0; IW0 = 0;
+    SU0 = P.Kf*(1-1/G0u); EU0 = 0; IU0 = 0; SW0 = 0; EW0 = 0; IW0 = 0;
     yinit = [SH0; EH0; AH0; DH0; Ie0; SU0; EU0; IU0; SW0; EW0; IW0];
     
     options = odeset('AbsTol',1e-10,'RelTol',1e-10);
@@ -64,9 +64,9 @@ for iphi = 1:length(phiW_list)
     
     
     frac_0 = 0.5; % initial infection fraction;
-    Nw_0 = P.Kf*(1-1/G0w)*frac_0;
-    Nu_0 = P.Kf*(1-1/G0w)*(1-frac_0);
-    
+    NM_end = sum(yinit(6:8));
+    Nw_0 = NM_end*frac_0;
+    Nu_0 = NM_end*(1-frac_0);
     
     temp = sum(yinit(6:8));
     yinit(6) = Nu_0*yinit(6)/temp; % Su
@@ -74,7 +74,7 @@ for iphi = 1:length(phiW_list)
     yinit(8) = Nu_0*yinit(8)/temp; % Iu
     yinit(9) = Nw_0;
     
-    [t1,y1] = ode45(@BaseModel,linspace(0,tconti,500),yinit,options,P);
+    [t1,y1] = ode45(@BaseModel,linspace(0,tconti,1500),yinit,options,P);
     
     t = t1;
     y = y1;
@@ -86,6 +86,9 @@ for iphi = 1:length(phiW_list)
     %% remove the redundant time steps after SS
     y_der = vecnorm(diff(y),2,2);
     ind = length(t) - find(flip(y_der)>700,1); % solution index when norm(change) < 500
+    ind = length(t);
+    t_raw = t;
+    y_raw = y;
     t = t(1:end-1);
     y = y(1:end-1,:);
     t(ind:end)=[];
@@ -112,13 +115,13 @@ for iphi = 1:length(phiW_list)
     figure
     hold on
     col = t;
-    scatter(NW./NM,(AH+DH)./NH,[],col,'o','filled')
+    scatter(NW./NM,(AH+DH)./NH,[],col,'>','filled')
     set(gca,'fontsize',18)
     xlabel('Wolbachia prevalence')
     ylabel('Malaria prevalence in humans')
     axis([0 1 0 1])
     colorbar
-    caxis([0 300])
+    caxis([0 5000])
     title(['R0w=',num2str(R0w), '  case = ', num2str(case_id)])
     
 %     if case_id==1
@@ -131,8 +134,8 @@ for iphi = 1:length(phiW_list)
 %             pW_final=1;
 %         end
 %     end
-    pW_final = NW(end)/NM(end);
-    mW_final = (AH(end)+DH(end))/NH(end);
+    pW_final = sum(y_raw(end,9:11))/sum(y_raw(end,6:11));
+    mW_final = (y_raw(end,3)+y_raw(end,4))/sum(y_raw(end,1:4));
     plot(pW_final,mW_final,'*','linewidth',2)
     
 end
