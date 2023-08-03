@@ -1,3 +1,4 @@
+function P = Baseline_params_stephensi(P)
 %% Mosquito parameters from Florez et al paper 
 % psi_raw = 1/10; % from larave to adult 10 days 
 % delta_raw = 1/3; % from egg to larvae 3 days 
@@ -32,3 +33,5 @@ P.ci = 1; % new parameter
 %% New parameters linking malaria and Wolbachia
 P.sigma = 1/10;
 P.alpha = 0;
+
+end
