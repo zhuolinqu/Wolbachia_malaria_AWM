@@ -1,9 +1,9 @@
 function SS_mat = EquilibriumState_w(P)
 
 % output [type, Equilibrium]
-% type=1, DFE
-% type=2, EE-
-% type=3, EE+ (CIE when vw=1)
+% row 1, DFE
+% row 2, EE-
+% row 3, EE+ (CIE when vw=1)
 
 SS_mat = NaN(3,2);
 

@@ -4,7 +4,7 @@ format long
 
 %% Parameters
 Baseline_params_malaria;
-Baseline_params_stephensi;
+P = Baseline_params_stephensi(P);
 P.vw = 0.95; P.vu = 1-P.vw;
 
 phiW_list = linspace(0.1,5,10);
