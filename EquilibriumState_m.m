@@ -33,29 +33,20 @@ R0m = Cal_R0_malaria(0,SU,P);
 SH = P.gH/P.muH; EH = 0; AH = 0; DH = 0; Ie = 0;
 SS_mat(1,1:end-1) = [SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW];
 
-if R0m>1
+if R0m<1 && R0w<1
     SS_mat(1,end) = 1;
-elseif R0m<1
-    SS_mat(1,end) = 0;
 else
-    keyboard
+    SS_mat(1,end) = 0;
 end
 
 %% (row 2) DFE-EE-: no malaria and unstable Wolbachia endemic
 SU = Wol_EEm(1); SW = Wol_EEm(2);
 if ~isnan(SU) % if Wolbachia EE- exist
     EU = 0; IU = 0; EW = 0; IW = 0;
-    R0m = Cal_R0_malaria(SW, SU, P);
+%     R0m = Cal_R0_malaria(SW, SU, P);
     SH = P.gH/P.muH; EH = 0; AH = 0; DH = 0; Ie = 0;
     SS_mat(2,1:end-1) = [SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW];
-    
-    if R0m>1
-        SS_mat(2,end) = 1;
-    elseif R0m<1
-        SS_mat(2,end) = 0;
-    else
-        keyboard
-    end
+    SS_mat(2,end) = 0;
 end
 
 %% (row 3) DFE-EE+: no malaria and stable Wolbachia endemic
@@ -66,29 +57,33 @@ if ~isnan(SU) % if Wolbachia EE+ exist
     SH = P.gH/P.muH; EH = 0; AH = 0; DH = 0; Ie = 0;
     SS_mat(3,1:end-1) = [SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW];  
     
-    if R0m>1
+    if R0m<1
         SS_mat(3,end) = 1;
-    elseif R0m<1
-        SS_mat(3,end) = 0;
     else
-        keyboard
+        SS_mat(3,end) = 0;
     end
 end
 
 %% (row 4) EE-DFE: malaria endemic and no Wolbachia
 SU = Wol_DFE(1); SW = Wol_DFE(2); % SW = 0;
 R0m = Cal_R0_malaria(SW,SU,P);
-if R0m>1
+if R0m>1 
     SH0 = P.gH/P.muH-1; EH0 = 1; AH0 = 0; DH0 = 0; Ie0 = 0;
     SU0 = SU; EU0 = 0; IU0 = 0; SW0 = 0; EW0 = 0; IW0 = 0;
     yinit = [SH0; EH0; AH0; DH0; Ie0; SU0; EU0; IU0; SW0; EW0; IW0];
     options = odeset('AbsTol',1e-10,'RelTol',1e-10);
     [~,y] = ode45(@BaseModel,linspace(0,1000,50),yinit,options,P);
     SS_mat(4,1:end-1) = y(end,:);
-    SS_mat(4,end) = 1;
+    
     SU_frac = y(end,6)/sum(y(end,6:8),2);
     EU_frac = y(end,7)/sum(y(end,6:8),2);
     IU_frac = y(end,8)/sum(y(end,6:8),2);
+    
+    if R0w<1
+        SS_mat(4,end) = 1;
+    else
+        SS_mat(4,end) = 0;
+    end
 end
 
 
