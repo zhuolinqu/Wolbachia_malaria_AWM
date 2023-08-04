@@ -29,7 +29,7 @@ Wol_EEp = SS_matW(3,:);
 
 %% (row 1) DFE-DFE: no malaria and no Wolbachia
 SU = Wol_DFE(1); SW = Wol_DFE(2); EU = 0; IU = 0; EW = 0; IW = 0;
-R0m = Cal_R0_malaria(0,SU,P);
+R0m = Cal_R0_malaria(SU,0,P);
 SH = P.gH/P.muH; EH = 0; AH = 0; DH = 0; Ie = 0;
 SS_mat(1,1:end-1) = [SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW];
 
@@ -43,7 +43,7 @@ end
 SU = Wol_EEm(1); SW = Wol_EEm(2);
 if ~isnan(SU) % if Wolbachia EE- exist
     EU = 0; IU = 0; EW = 0; IW = 0;
-%     R0m = Cal_R0_malaria(SW, SU, P);
+%     R0m = Cal_R0_malaria(SU, SW, P);
     SH = P.gH/P.muH; EH = 0; AH = 0; DH = 0; Ie = 0;
     SS_mat(2,1:end-1) = [SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW];
     SS_mat(2,end) = 0;
@@ -53,7 +53,7 @@ end
 SU = Wol_EEp(1); SW = Wol_EEp(2);
 if ~isnan(SU) % if Wolbachia EE+ exist
     EU = 0; IU = 0; EW = 0; IW = 0;
-    R0m = Cal_R0_malaria(SW, SU, P);
+    R0m = Cal_R0_malaria(SU, SW, P);
     SH = P.gH/P.muH; EH = 0; AH = 0; DH = 0; Ie = 0;
     SS_mat(3,1:end-1) = [SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW];  
     
@@ -66,7 +66,7 @@ end
 
 %% (row 4) EE-DFE: malaria endemic and no Wolbachia
 SU = Wol_DFE(1); SW = Wol_DFE(2); % SW = 0;
-R0m = Cal_R0_malaria(SW,SU,P);
+R0m = Cal_R0_malaria(SU,SW,P);
 if R0m>1 
     SH0 = P.gH/P.muH-1; EH0 = 1; AH0 = 0; DH0 = 0; Ie0 = 0;
     SU0 = SU; EU0 = 0; IU0 = 0; SW0 = 0; EW0 = 0; IW0 = 0;
@@ -89,7 +89,7 @@ end
 
 %% (row 5) EE-EE-: malaria endemic and unstable Wolbachia endemic
 NU = Wol_EEm(1); NW = Wol_EEm(2);
-R0m = Cal_R0_malaria(NW,NU,P);
+R0m = Cal_R0_malaria(NU,NW,P);
 
 if R0m>1 && ~isnan(NU) % if Wolbachia EE- exist
     SH0 = P.gH/P.muH*0.3; EH0 = P.gH/P.muH*0.2; AH0 = P.gH/P.muH*0.25; DH0 = P.gH/P.muH*0.25; Ie0 = 0;
@@ -111,7 +111,7 @@ end
 
 %% (row 6) EE-EE+: malaria endemic and stable Wolbachia endemic
 NU = Wol_EEp(1); NW = Wol_EEp(2);
-R0m = Cal_R0_malaria(NW,NU,P);
+R0m = Cal_R0_malaria(NU,NW,P);
 if R0m>1 && ~isnan(NU) % if Wolbachia EE+ exist
     SH0 = P.gH/P.muH-1; EH0 = 1; AH0 = 0; DH0 = 0; Ie0 = 0;
     SU0 = NU*SU_frac; EU0 = NU*EU_frac; IU0 = NU*IU_frac;

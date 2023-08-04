@@ -5,6 +5,8 @@ function SS_mat = EquilibriumState_w(P)
 % row 2, EE-
 % row 3, EE+ (CIE when vw=1)
 
+% [Fu, Fw] 
+
 SS_mat = NaN(3,2);
 
 [R0w, G0w, G0u] = Cal_R0_wolbachia(P);

@@ -1,4 +1,4 @@
-function [R0, RHM, RMH] = Cal_R0_malaria(Sw,Su,P)
+function [R0, RHM, RMH] = Cal_R0_malaria(Su,Sw,P)
 % basic reproduction number for malaria transmission, given the Wolbachia
 % level Su and Sw.
 
