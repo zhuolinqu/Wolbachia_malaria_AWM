@@ -5,7 +5,7 @@ tic
 
 %% Parameters & numerical config
 Baseline_params_malaria;
-Baseline_params_stephensi;
+P = Baseline_params_stephensi(P);
 tfinal = 1000;
 %% Sampling
 EH0_max = P.gH/P.muH; EH0_min = 1;

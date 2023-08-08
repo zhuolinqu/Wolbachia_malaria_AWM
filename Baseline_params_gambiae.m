@@ -36,3 +36,5 @@ P.mufw = mufwp;
 P.sigma = 1/10; % incubation period of malaria in mosquito
 P.alpha = 0; % effectiveness of Wolbachia
 
+end
+

@@ -1,10 +1,9 @@
 clearvars; close all; clc
-global P
 
 tic
 %% Parameters
 Baseline_params_malaria;
-Baseline_params_stephensi;
+P = Baseline_params_stephensi(P);
 
 %% Run model
 % Time frame
