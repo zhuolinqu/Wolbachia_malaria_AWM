@@ -23,9 +23,9 @@ if G0u<1 || G0w<1
 end
 
 SS_matW = EquilibriumState_w(P);
-Wol_DFE = SS_matW(1,:);
-Wol_EEm = SS_matW(2,:);
-Wol_EEp = SS_matW(3,:);
+Wol_DFE = SS_matW(1,1:end-1); Wol_DFE_sta = SS_matW(1,end);
+Wol_EEm = SS_matW(2,1:end-1); Wol_EEm_sta = SS_matW(2,end);
+Wol_EEp = SS_matW(3,1:end-1); Wol_EEp_sta = SS_matW(3,end);
 
 %% (row 1) DFE-DFE: no malaria and no Wolbachia
 SU = Wol_DFE(1); SW = Wol_DFE(2); EU = 0; IU = 0; EW = 0; IW = 0;
@@ -33,7 +33,7 @@ R0m = Cal_R0_malaria(SU,0,P);
 SH = P.gH/P.muH; EH = 0; AH = 0; DH = 0; Ie = 0;
 SS_mat(1,1:end-1) = [SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW];
 
-if R0m<1 && R0w<1
+if R0m<1 && Wol_DFE_sta==1
     SS_mat(1,end) = 1;
 else
     SS_mat(1,end) = 0;
@@ -41,11 +41,12 @@ end
 
 %% (row 2) DFE-EE-: no malaria and unstable Wolbachia endemic
 SU = Wol_EEm(1); SW = Wol_EEm(2);
-if ~isnan(SU) % if Wolbachia EE- exist
+if ~isnan(SU) % if Wolbachia EE- exist, always unstable
     EU = 0; IU = 0; EW = 0; IW = 0;
 %     R0m = Cal_R0_malaria(SU, SW, P);
     SH = P.gH/P.muH; EH = 0; AH = 0; DH = 0; Ie = 0;
     SS_mat(2,1:end-1) = [SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW];
+    if Wol_EEm_sta~=0; keyboard;end % wolbachia EE- should always be unstable  
     SS_mat(2,end) = 0;
 end
 
@@ -57,16 +58,10 @@ if ~isnan(SU) % if Wolbachia EE+ exist
     SH = P.gH/P.muH; EH = 0; AH = 0; DH = 0; Ie = 0;
     SS_mat(3,1:end-1) = [SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW];  
     
-    if R0m<1
-        if P.vw<1
-            SS_mat(3,end) = 1;
-        elseif P.vw==1 && R0w>1-P.ci % if CIE is stable
-            SS_mat(3,end) = 1;
-        else % unstable CIE            
-            SS_mat(3,end) = 0;
-        end
+    if R0m<1 && Wol_EEp_sta==1       
+        SS_mat(3,end) = 1;       
     else
-        SS_mat(3,end) = 0;
+        SS_mat(3,end) = 0;       
     end
 end
 
@@ -85,7 +80,7 @@ if R0m>1
     EU_frac = y(end,7)/sum(y(end,6:8),2);
     IU_frac = y(end,8)/sum(y(end,6:8),2);
     
-    if R0w<1
+    if Wol_DFE_sta==1
         SS_mat(4,end) = 1;
     else
         SS_mat(4,end) = 0;
@@ -110,6 +105,7 @@ if R0m>1 && ~isnan(NU) % if Wolbachia EE- exist
         keyboard
     end
     SS_mat(5,1:end-1) = ysol;
+    if Wol_EEm_sta~=0; keyboard;end % wolbachia EE- should always be unstable  
     SS_mat(5,end) = 0;
     
 end
@@ -133,11 +129,9 @@ if R0m>1 && ~isnan(NU) % if Wolbachia EE+ exist
     end
     SS_mat(6,1:end-1) = y(end,:);
     
-    if P.vw<1
+    if Wol_EEp_sta==1   
         SS_mat(6,end) = 1;
-    elseif P.vw==1 && R0w>1-P.ci % if CIE is stable
-        SS_mat(6,end) = 1;
-    else  % unstable CIE
+    else  
         SS_mat(6,end) = 0;
     end
 

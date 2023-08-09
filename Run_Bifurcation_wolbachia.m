@@ -5,21 +5,39 @@ tic
 %% Parameters & numerical config
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
-P.vw = 0.95; P.vu = 1- P.vw;
+P.vw = 1; P.vu = 1- P.vw;
+P.ci = 0.8;
 %% Sampling
-phiW_list = linspace(0.2,1,100);
+phiW_list = linspace(0.01,2,10000);
 
 %% Run model
 Winf = NaN(3,length(phiW_list));
+Winf_stab = NaN(3,length(phiW_list));
 R0w = NaN(1,length(phiW_list));
+
 for iphi = 1:length(phiW_list)   
     P.phiW = phiW_list(iphi);
     SS_mat = EquilibriumState_w(P);
-    Winf(:,iphi) = SS_mat(:,2)./sum(SS_mat,2);
+    Winf(:,iphi) = SS_mat(:,2)./sum(SS_mat(:,1:end-1),2);
+    Winf_stab(:,iphi) = SS_mat(:,end);
     R0w(:,iphi) = Cal_R0_wolbachia(P);
 end
 
-figure(1)
-plot(R0w,Winf,'-','linewidth',2)
-toc
+if P.vw<1
+    legend_list = {'Wolbachia-free (WFE)','Wobachia low endemic (WEE-)','Wobachia high endemic (WEE+)'};
+elseif P.vw==1
+    legend_list = {'Wolbachia-free (WFE)','Wobachia low endemic (WEE-)','Wobachia complete endemic (WCE)'};
+end
+figure
+hold on
 
+for iline = 1:3  
+    plot(R0w(Winf_stab(iline,:)==1),Winf(iline,Winf_stab(iline,:)==1),'-','DisplayName',legend_list{iline},'LineWidth',2)   
+    plot(R0w(Winf_stab(iline,:)==0),Winf(iline,Winf_stab(iline,:)==0),'--','DisplayName',legend_list{iline},'LineWidth',2)
+end
+legend
+xlabel('R0w')
+ylabel('Wolbachia prevalence')
+axis([0 1.2 0 1.1])
+title(['vw=',num2str(P.vw),', ci=', num2str(P.ci)])
+toc
