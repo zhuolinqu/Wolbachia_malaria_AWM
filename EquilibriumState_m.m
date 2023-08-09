@@ -49,7 +49,7 @@ if ~isnan(SU) % if Wolbachia EE- exist
     SS_mat(2,end) = 0;
 end
 
-%% (row 3) DFE-EE+: no malaria and stable Wolbachia endemic
+%% (row 3) DFE-EE+: no malaria and high Wolbachia endemic
 SU = Wol_EEp(1); SW = Wol_EEp(2);
 if ~isnan(SU) % if Wolbachia EE+ exist
     EU = 0; IU = 0; EW = 0; IW = 0;
@@ -58,7 +58,13 @@ if ~isnan(SU) % if Wolbachia EE+ exist
     SS_mat(3,1:end-1) = [SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW];  
     
     if R0m<1
-        SS_mat(3,end) = 1;
+        if P.vw<1
+            SS_mat(3,end) = 1;
+        elseif P.vw==1 && R0w>1-P.ci % if CIE is stable
+            SS_mat(3,end) = 1;
+        else % unstable CIE            
+            SS_mat(3,end) = 0;
+        end
     else
         SS_mat(3,end) = 0;
     end
@@ -109,7 +115,7 @@ if R0m>1 && ~isnan(NU) % if Wolbachia EE- exist
 end
 
 
-%% (row 6) EE-EE+: malaria endemic and stable Wolbachia endemic
+%% (row 6) EE-EE+: malaria endemic and high Wolbachia endemic
 NU = Wol_EEp(1); NW = Wol_EEp(2);
 R0m = Cal_R0_malaria(NU,NW,P);
 if R0m>1 && ~isnan(NU) % if Wolbachia EE+ exist
@@ -126,7 +132,15 @@ if R0m>1 && ~isnan(NU) % if Wolbachia EE+ exist
         yinit = y(end,:);
     end
     SS_mat(6,1:end-1) = y(end,:);
-    SS_mat(6,end) = 1;
+    
+    if P.vw<1
+        SS_mat(6,end) = 1;
+    elseif P.vw==1 && R0w>1-P.ci % if CIE is stable
+        SS_mat(6,end) = 1;
+    else  % unstable CIE
+        SS_mat(6,end) = 0;
+    end
+
 end
 
 end
