@@ -24,20 +24,21 @@ for iphi = 1:length(phiW_list)
 end
 
 if P.vw<1
-    legend_list = {'Wolbachia-free (WFE)','Wobachia low endemic (WEE-)','Wobachia high endemic (WEE+)'};
+    legend_list = {'WFE','WEE$^-$','WEE$^+$'};
 elseif P.vw==1
-    legend_list = {'Wolbachia-free (WFE)','Wobachia low endemic (WEE-)','Wobachia complete endemic (WCE)'};
+    legend_list = {'WFE','WEE$^-$','WCE'};
 end
-figure
+
+figure_setups
 hold on
 
 for iline = 1:3  
-    plot(R0w(Winf_stab(iline,:)==1),Winf(iline,Winf_stab(iline,:)==1),'-','DisplayName',legend_list{iline},'LineWidth',2)   
-    plot(R0w(Winf_stab(iline,:)==0),Winf(iline,Winf_stab(iline,:)==0),'--','DisplayName',legend_list{iline},'LineWidth',2)
+    plot(R0w(Winf_stab(iline,:)==1),Winf(iline,Winf_stab(iline,:)==1),'-','DisplayName',legend_list{iline})   
+    plot(R0w(Winf_stab(iline,:)==0),Winf(iline,Winf_stab(iline,:)==0),'--','DisplayName',legend_list{iline})
 end
 legend
-xlabel('R0w')
+xlabel('$\mathcal{R}_0^w$')
 ylabel('Wolbachia prevalence')
 axis([0 1.2 0 1.1])
-title(['vw=',num2str(P.vw),', ci=', num2str(P.ci)])
+title(['$v_w=',num2str(P.vw),',~~ c_i=', num2str(P.ci),'$'])
 toc
