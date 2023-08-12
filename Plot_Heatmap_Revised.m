@@ -1,6 +1,8 @@
-clearvars; clc%close all; clc
+clearvars;
 
-Baseline_params_malaria
+%close all; clc
+
+Baseline_params_malaria;
 P = Baseline_params_gambiae(P);
 tic
 %vw_vec = .5:.02:1;
@@ -45,7 +47,7 @@ for j1 = 1:length(ci_vec)
 
     %R0_M(k,j) = sqrt(R0MH*R0HM);
 
-    [R0, RHM, RMH] = Cal_R0_malaria(NH,NM,Swstar,Sustar,P);
+    [R0, RHM, RMH] = Cal_R0_malaria(Sustar,Swstar,P);
 
     A_R0M(j1) = R0;
     A_R0M1(j1) = sqrt(R0MH*R0HM);

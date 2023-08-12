@@ -2,7 +2,7 @@
 P.bm = 0.6;
 P.bh = 5;
 
-P.betaM = 0.25;
+P.betaM = 0.18;
 P.betaD = 0.35;
 P.betaA = 0.03;
 
