@@ -1,70 +1,77 @@
 clearvars;
-% close all; clc
+close all; clc
 tic
 
+
 %% Parameters & numerical config
-Baseline_params_malaria;
-P = Baseline_params_stephensi(P);
-P.vw = 0.95; P.vu = 1- P.vw;
-%% Sampling
-phiW_list = [linspace(0.2,0.85,100), linspace(0.8,0.85,200),linspace(0.85,5,200)];
+% Baseline_params_malaria;
+% P = Baseline_params_stephensi(P);
+% P.vw = 0.95; P.vu = 1- P.vw;
+% %% Sampling
+% phiW_min = P.mufw/(P.vw*P.bf);
+% phiW_list = [phiW_min:0.03:0.245, 0.245:0.001:0.25, 0.25:0.005:0.5, ...
+%     0.5:0.005:0.55, 0.55:0.01:1.5];   %  [linspace(0.2,0.85,100), linspace(0.8,0.85,200),linspace(0.85,5,200)]; 
+% 
+% %% Run steady state calculations
+% Minf = NaN(6,length(phiW_list));
+% Winf = NaN(6,length(phiW_list));
+% Stab = NaN(6,length(phiW_list));
+% R0w = NaN(1,length(phiW_list));
+% for iphi = 1:length(phiW_list)
+%     P.phiW = phiW_list(iphi);
+%     SS_mat = EquilibriumState_m(P);
+%     Minf(:,iphi) = (SS_mat(:,3)+SS_mat(:,4))./sum(SS_mat(:,1:4),2);
+%     Winf(:,iphi) = sum(SS_mat(:,9:11),2)./sum(SS_mat(:,6:11),2);
+%     Stab(:,iphi) = SS_mat(:,end);
+%     R0w(:,iphi) = Cal_R0_wolbachia(P);
+% end
+% save('Bifurcation_3D.mat')
 
-%% Run steady state calculations
-Minf = NaN(6,length(phiW_list));
-Winf = NaN(6,length(phiW_list));
-Stab = NaN(6,length(phiW_list));
-R0w = NaN(1,length(phiW_list));
-for iphi = 1:length(phiW_list)
-    P.phiW = phiW_list(iphi);
-    SS_mat = EquilibriumState_m(P);
-    Minf(:,iphi) = (SS_mat(:,3)+SS_mat(:,4))./sum(SS_mat(:,1:4),2);
-    Winf(:,iphi) = sum(SS_mat(:,9:11),2)./sum(SS_mat(:,6:11),2);
-    Stab(:,iphi) = SS_mat(:,end);
-    R0w(:,iphi) = Cal_R0_wolbachia(P);
-end
-
+load('Bifurcation_3D.mat')
 %%
-legend_list = {'no malaria and no Wol.','no malaria and unstable Wol.','no malaria and stable Wol',...
-    'malaria endemic and no Wol','malaria endemic and unstable Wol','malaria endemic and stable Wol'};
-
-figure
-hold on
-for iline = 1:6
-    plot3(R0w(Stab(iline,:)==1),Minf(iline,Stab(iline,:)==1),Winf(iline,Stab(iline,:)==1),'x-','DisplayName',legend_list{iline},'LineWidth',2)
-    plot3(R0w(Stab(iline,:)==0),Minf(iline,Stab(iline,:)==0),Winf(iline,Stab(iline,:)==0),'--','DisplayName',legend_list{iline},'LineWidth',2)
-end
-legend
-xlabel('R0w')
-ylabel('Malaria prevalence')
-zlabel('Wolbachia prevalence')
-view(3)
-grid on
-toc
+% legend_list = {'no malaria and no Wol.','no malaria and unstable Wol.','no malaria and stable Wol',...
+%     'malaria endemic and no Wol','malaria endemic and unstable Wol','malaria endemic and stable Wol'};
+% 
+% figure_setups
+% hold on
+% for iline = 1:6
+%     plot3(R0w(Stab(iline,:)==1),Minf(iline,Stab(iline,:)==1),Winf(iline,Stab(iline,:)==1),'x-','DisplayName',legend_list{iline},'LineWidth',2)
+%     plot3(R0w(Stab(iline,:)==0),Minf(iline,Stab(iline,:)==0),Winf(iline,Stab(iline,:)==0),'--','DisplayName',legend_list{iline},'LineWidth',2)
+% end
+% legend
+% xlabel('R0w')
+% ylabel('Malaria prevalence')
+% zlabel('Wolbachia prevalence')
+% view(3)
+% grid on
+% toc
 
 %% change angle to match scratch paper
 legend_list = {'no malaria and no Wol.','no malaria and unstable Wol.','no malaria and stable Wol',...
     'malaria endemic and no Wol','malaria endemic and unstable Wol','malaria endemic and stable Wol'};
 
-figure
-hold on
+f = figure_setups; hold on; 
+set(f,'WindowState','maximized') % make the plot full screen
+view([110,17]) 
+
 for iline = 1:6
-    plot3(Winf(iline,Stab(iline,:)==1),R0w(Stab(iline,:)==1),Minf(iline,Stab(iline,:)==1),'x-','DisplayName',legend_list{iline},'LineWidth',2)
-    plot3(Winf(iline,Stab(iline,:)==0),R0w(Stab(iline,:)==0),Minf(iline,Stab(iline,:)==0),'--','DisplayName',legend_list{iline},'LineWidth',2)
+    plot3(Winf(iline,Stab(iline,:)==1),R0w(Stab(iline,:)==1),Minf(iline,Stab(iline,:)==1),'-','DisplayName',legend_list{iline})
+    plot3(Winf(iline,Stab(iline,:)==0),R0w(Stab(iline,:)==0),Minf(iline,Stab(iline,:)==0),'--','DisplayName',legend_list{iline})
 end
-legend
+% legend
 xlabel('Wolbachia prevalence')
-ylabel('R0w')
+ylabel('$R_0^w$')
 zlabel('Malaria prevalence')
 grid on
 
-view(3)
-save('Bifurcation_3D.mat')
 %% solution trajectory
 % rest to baseline parameters
-P = Baseline_params_stephensi(P); P.vw = 0.95; P.vu = 1- P.vw;
+P = Baseline_params_stephensi(P); 
+P.vw = 0.95; P.vu = 1- P.vw;
 SS_mat = EquilibriumState_m(P);
 R0w = Cal_R0_wolbachia(P);
 yinit = SS_mat(5,1:end-1);
+%[SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW]
 yinit(1) = yinit(1)+yinit(3)+yinit(4)+yinit(2)*0;
 yinit(2) = yinit(2)-yinit(2)*0;
 yinit(3) = yinit(3)-yinit(3);
@@ -91,18 +98,9 @@ NU = SU + EU + IU;
 NW = SW + EW + IW;
 NM = NU + NW;
 
-figure(1)
-hold on
 col = t;
 scatter3(NW./NM,R0w*ones(size(t)),(AH+DH)./NH,[],col,'>','filled')
-xlabel('R0w')
-ylabel('Malaria prevalence (A+D)/NH')
-zlabel('Wolbachia prevalence')
-colorbar
-caxis([0 5000])
-
-
-
-
+% colorbar
+% caxis([0 5000])
 
 

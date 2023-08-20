@@ -98,9 +98,6 @@ end
 %% (row 6) EE-EE+: malaria endemic and high Wolbachia endemic
 NU = Wol_EEp(1); NW = Wol_EEp(2);
 R0m = Cal_R0_malaria(NU,NW,P);
-if abs(R0m-1)<10^-3
-    keyboard
-end
 if R0m>1 && ~isnan(NU) % if Wolbachia EE+ exist
     if flag_nearby && ~isnan(sum(SS_mat_old(6,1:end-1),2))
         yinit = SS_mat_old(6,1:end-1);
@@ -150,16 +147,79 @@ if R0m>1 && ~isnan(NU) % if Wolbachia EE- exist
         end
         yinit = [SH0; EH0; AH0; DH0; Ie0; SU0; EU0; IU0; SW0; EW0; IW0];
     end
+    % solve a reduced system so that SU+EU+IU == NU and SW+EW+IW == NW are constant for mosquitoes
+    yinit([8,11])=[]; 
+    F_prop = @(x) Model_RHS(x,P,NU,NW);
     options = optimoptions('fsolve','Display','none','OptimalityTolerance', 1e-25);
-    F_prop = @(x) BaseModel(0,x,P);
     [ysol,err,~,~,~] = fsolve(F_prop,yinit,options);
     if max(max(abs(err)))>10^-5
         disp('not converged')
         keyboard
     end
-    SS_mat(5,1:end-1) = ysol;
+    SS_mat(5,[1,2,3,4,5,6,7,9,10]) = ysol;
+    SS_mat(5,8) = NU-ysol(6)-ysol(7);
+    SS_mat(5,11) = NW-ysol(8)-ysol(9);
     if Wol_EEm_sta~=0; keyboard;end % wolbachia EE- should always be unstable
     SS_mat(5,end) = 0;
 
 end
+end
+
+function dy = Model_RHS(y,P,NU,NW)
+SH = y(1);
+EH = y(2);
+AH = y(3);
+DH = y(4);
+Ie = y(5);
+
+SU = y(6);
+EU = y(7);
+IU = NU-SU-EU;
+
+SW = y(8);
+EW = y(9);
+IW = NW-SW-EW;
+
+NH = SH + EH + AH + DH;
+NU = SU + EU + IU;
+NW = SW + EW + IW;
+NM = NU + NW;
+
+BM = P.bm*P.bh*NH/(P.bm*NM+P.bh*NH);
+BH = P.bm*P.bh*NM/(P.bm*NM+P.bh*NH);
+
+LamH = BH*P.betaM*(IU+IW)/NM;
+LamM = BM*(P.betaD*DH+P.betaA*AH)/NH;
+
+psi = P.psi;
+rho = P.rho;
+phi = P.phi;
+
+f_LamH = LamH/(P.gamma*LamH+1);
+
+dSH = P.gH - LamH*SH + phi*P.rD*DH ...
+    + P.rA*AH - P.muH*SH;
+dEH = LamH*SH - P.h*EH - P.muH*EH;
+dAH = rho*P.h*EH - (1-psi)*LamH*AH ...
+    + (1-phi)*P.rD*DH - P.rA*AH - P.muH*AH;
+dDH = (1-rho)*P.h*EH + (1-psi)*LamH*AH - P.rD*DH ...
+    - (P.muH+P.muD)*DH;
+dIe = f_LamH*(P.cS*SH+P.cE*EH+P.cA*AH+P.cD*DH) ...
+    - (1/P.de + P.muH + P.muD*DH/NH)*Ie;
+
+gU = P.bf*P.phiU*NU/(NU+P.mufw/P.mufu*NW)*(1-(NU+NW)/P.Kf)*NU...
+    + (1-P.ci)*P.bf*P.phiU*P.mufw/P.mufu*NW/(NU+P.mufw/P.mufu*NW)*(1-(NU+NW)/P.Kf)*NU...
+    + P.vu*P.bf*P.phiW*(1-(NU+NW)/P.Kf)*NW;
+gW = P.vw*P.bf*P.phiW*(1-(NU+NW)/P.Kf)*NW;
+
+dSU = -LamM*SU + gU - P.mufu*SU;
+dEU = LamM*SU - P.sigma*EU - P.mufu*EU;
+% dIU = P.sigma*EU - P.mufu*IU;
+dSW = -P.alpha*LamM*SW + gW - P.mufw*SW;
+dEW = P.alpha*LamM*SW - P.sigma*EW - P.mufw*EW;
+% dIW = P.sigma*EW - P.mufw*IW;
+
+% dy = [dSH; dEH; dAH; dDH; dIe; dSU; dEU; dIU; dSW; dEW; dIW];
+dy = [dSH; dEH; dAH; dDH; dIe; dSU; dEU; dSW; dEW];
+
 end
