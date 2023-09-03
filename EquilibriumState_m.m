@@ -9,9 +9,18 @@ function  SS_mat = EquilibriumState_m(P,SS_mat_old)
 % (row 5) EE-EE-: malaria endemic and unstable Wolbachia endemic
 % (row 6) EE-EE+: malaria endemic and stable Wolbachia endemic
 
-% last column SS_mat(:,end) indicates stability. 1 = stable, 0 = unstable
+% SS_mat(:,1:11) solution (1:5) malaria + (6:11) wolbachia
+% SS_mat(:,n=12) indicates stability for malaria. 1 = stable, 0 = unstable
+% SS_mat(:,n=13) indicates stability for wolbachia. 1 = stable, 0 = unstable
+% SS_mat(:,n=14) last column indicates stability overall. 1 = stable, 0 = unstable  
 
-SS_mat = NaN(6,12);
+%[SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW]
+
+SS_mat = NaN(6,14);
+index_m = 12;
+index_w = 13;
+index_all = 14;
+
 [R0w, G0w, G0u] = Cal_R0_wolbachia(P);
 
 if exist('SS_mat_old','var')
@@ -21,8 +30,6 @@ if exist('SS_mat_old','var')
 else
     flag_nearby = 0;
 end
-
-%[SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW]
 
 %% Check
 if G0u<1 || G0w<1
@@ -39,23 +46,39 @@ Wol_EEp = SS_matW(3,1:end-1); Wol_EEp_sta = SS_matW(3,end);
 SU = Wol_DFE(1); SW = Wol_DFE(2); EU = 0; IU = 0; EW = 0; IW = 0;
 R0m = Cal_R0_malaria(SU,0,P);
 SH = P.gH/P.muH; EH = 0; AH = 0; DH = 0; Ie = 0;
-SS_mat(1,1:end-1) = [SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW];
+SS_mat(1,1:11) = [SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW];
 
-if R0m<1 && Wol_DFE_sta==1
-    SS_mat(1,end) = 1;
+if R0m<1
+    SS_mat(1,index_m) = 1;
 else
-    SS_mat(1,end) = 0;
+    SS_mat(1,index_m) = 0; 
 end
+SS_mat(1,index_w) = Wol_DFE_sta; 
+SS_mat(1,index_all) = SS_mat(1,index_w)*SS_mat(1,index_m);
+
+% if R0m<1 && Wol_DFE_sta==1
+%     SS_mat(1,end) = 1;
+% else
+%     SS_mat(1,end) = 0;
+% end
 
 %% (row 2) DFE-EE-: no malaria and unstable Wolbachia endemic
 SU = Wol_EEm(1); SW = Wol_EEm(2);
 if ~isnan(SU) % if Wolbachia EE- exist, always unstable
     EU = 0; IU = 0; EW = 0; IW = 0;
-    %     R0m = Cal_R0_malaria(SU, SW, P);
     SH = P.gH/P.muH; EH = 0; AH = 0; DH = 0; Ie = 0;
-    SS_mat(2,1:end-1) = [SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW];
+    SS_mat(2,1:11) = [SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW];   
+    R0m = Cal_R0_malaria(SU, SW, P);
+    if R0m<1
+        SS_mat(2,index_m) = 1;
+    else
+        SS_mat(2,index_m) = 0;
+    end
     if Wol_EEm_sta~=0; keyboard;end % wolbachia EE- should always be unstable
-    SS_mat(2,end) = 0;
+    SS_mat(2,index_w) = Wol_EEm_sta;
+    SS_mat(2,index_all) = SS_mat(2,index_w)*SS_mat(2,index_m);
+
+    % SS_mat(2,end) = 0;
 end
 
 %% (row 3) DFE-EE+: no malaria and high Wolbachia endemic
@@ -64,13 +87,21 @@ if ~isnan(SU) % if Wolbachia EE+ exist
     EU = 0; IU = 0; EW = 0; IW = 0;
     R0m = Cal_R0_malaria(SU, SW, P);
     SH = P.gH/P.muH; EH = 0; AH = 0; DH = 0; Ie = 0;
-    SS_mat(3,1:end-1) = [SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW];
-
-    if R0m<1 && Wol_EEp_sta==1
-        SS_mat(3,end) = 1;
+    SS_mat(3,1:11) = [SH, EH, AH, DH, Ie, SU, EU, IU, SW, EW, IW];
+    
+    if R0m<1
+        SS_mat(3,index_m) = 1;
     else
-        SS_mat(3,end) = 0;
+        SS_mat(3,index_m) = 0;
     end
+    SS_mat(3,index_w) = Wol_EEp_sta;
+    SS_mat(3,index_all) = SS_mat(3,index_w)*SS_mat(3,index_m);
+
+    % if R0m<1 && Wol_EEp_sta==1
+    %     SS_mat(3,end) = 1;
+    % else
+    %     SS_mat(3,end) = 0;
+    % end
 end
 
 %% (row 4) EE-DFE: malaria endemic and no Wolbachia
@@ -82,25 +113,30 @@ if R0m>1
     yinit = [SH0; EH0; AH0; DH0; Ie0; SU0; EU0; IU0; SW0; EW0; IW0];
     options = odeset('AbsTol',1e-10,'RelTol',1e-10);
     [~,y] = ode45(@BaseModel,linspace(0,1000,50),yinit,options,P);
-    SS_mat(4,1:end-1) = y(end,:);
+    SS_mat(4,1:11) = y(end,:);
 
     SU_frac = y(end,6)/sum(y(end,6:8),2);
     EU_frac = y(end,7)/sum(y(end,6:8),2);
     IU_frac = y(end,8)/sum(y(end,6:8),2);
 
-    if Wol_DFE_sta==1
-        SS_mat(4,end) = 1;
-    else
-        SS_mat(4,end) = 0;
-    end
+    SS_mat(4,index_m) = 1;
+    SS_mat(4,index_w) = Wol_DFE_sta;
+    SS_mat(4,index_all) = SS_mat(4,index_w)*SS_mat(4,index_m);
+
+    % if Wol_DFE_sta==1
+    %     SS_mat(4,end) = 1;
+    % else
+    %     SS_mat(4,end) = 0;
+    % end
+
 end
 
 %% (row 6) EE-EE+: malaria endemic and high Wolbachia endemic
 NU = Wol_EEp(1); NW = Wol_EEp(2);
 R0m = Cal_R0_malaria(NU,NW,P);
 if R0m>1 && ~isnan(NU) % if Wolbachia EE+ exist
-    if flag_nearby && ~isnan(sum(SS_mat_old(6,1:end-1),2))
-        yinit = SS_mat_old(6,1:end-1);
+    if flag_nearby && ~isnan(sum(SS_mat_old(6,1:11),2))
+        yinit = SS_mat_old(6,1:11);
     else
         SH0 = P.gH/P.muH*0; EH0 = P.gH/P.muH*0.3; AH0 = P.gH/P.muH*0.35; DH0 = P.gH/P.muH*0.35; Ie0 = 0;
         SU0 = NU*SU_frac; EU0 = NU*EU_frac; IU0 = NU*IU_frac;
@@ -116,14 +152,18 @@ if R0m>1 && ~isnan(NU) % if Wolbachia EE+ exist
         yinit = y(end,:);
     end
 
-    SS_mat(6,1:end-1) = y(end,:);
+    SS_mat(6,1:11) = y(end,:);
 
-    if Wol_EEp_sta==1
-        SS_mat(6,end) = 1;
-    else
-        SS_mat(6,end) = 0;
-    end
-
+    SS_mat(6,index_m) = 1;
+    SS_mat(6,index_w) = Wol_EEp_sta;
+    SS_mat(6,index_all) = SS_mat(6,index_w)*SS_mat(6,index_m);    
+    % 
+    % if Wol_EEp_sta==1
+    %     SS_mat(6,end) = 1;
+    % else
+    %     SS_mat(6,end) = 0;
+    % end
+    
     SW_frac = y(end,9)/sum(y(end,9:11),2);
     EW_frac = y(end,10)/sum(y(end,9:11),2);
     IW_frac = y(end,11)/sum(y(end,9:11),2);
@@ -135,8 +175,8 @@ NU = Wol_EEm(1); NW = Wol_EEm(2);
 R0m = Cal_R0_malaria(NU,NW,P);
 
 if R0m>1 && ~isnan(NU) % if Wolbachia EE- exist
-    if flag_nearby && ~isnan(sum(SS_mat_old(5,1:end-1),2))
-        yinit = SS_mat_old(5,1:end-1);
+    if flag_nearby && ~isnan(sum(SS_mat_old(5,1:11),2))
+        yinit = SS_mat_old(5,1:11);
     else
         SH0 = P.gH/P.muH*0; EH0 = P.gH/P.muH*0.3; AH0 = P.gH/P.muH*0.35; DH0 = P.gH/P.muH*0.35; Ie0 = 0;
         SU0 = NU*SU_frac; EU0 = NU*EU_frac; IU0 = NU*IU_frac;
@@ -159,8 +199,14 @@ if R0m>1 && ~isnan(NU) % if Wolbachia EE- exist
     SS_mat(5,[1,2,3,4,5,6,7,9,10]) = ysol;
     SS_mat(5,8) = NU-ysol(6)-ysol(7);
     SS_mat(5,11) = NW-ysol(8)-ysol(9);
+
+
+    SS_mat(5,index_m) = 1;    
     if Wol_EEm_sta~=0; keyboard;end % wolbachia EE- should always be unstable
-    SS_mat(5,end) = 0;
+    SS_mat(5,index_w) = Wol_EEm_sta;
+    SS_mat(5,index_all) = SS_mat(5,index_w)*SS_mat(5,index_m);
+
+    % SS_mat(5,end) = 0;
 
 end
 end
