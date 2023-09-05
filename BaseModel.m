@@ -17,15 +17,13 @@ NU = SU + EU + IU;
 NW = SW + EW + IW;
 NM = NU + NW;
 
+[rho, phi, psi] = sigmoid_prob(Ie/NH, P);
+
 BM = P.bm*P.bh*NH/(P.bm*NM+P.bh*NH);
 BH = P.bm*P.bh*NM/(P.bm*NM+P.bh*NH);
 
 LamH = BH*P.betaM*(IU+IW)/NM;
 LamM = BM*(P.betaD*DH+P.betaA*AH)/NH;
-
-psi = P.psi;
-rho = P.rho;
-phi = P.phi;
 
 f_LamH = LamH/(P.gamma*LamH+1);
 

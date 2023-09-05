@@ -5,11 +5,11 @@ tic
 %% Parameters & numerical config
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
-P.vw = 0.95; P.vu = 1- P.vw;
+P.vw = 0.97; P.vu = 1- P.vw;
 %% Sampling
 phiW_min = P.mufw/(P.vw*P.bf);
-phiW_list = [phiW_min:0.03:0.245, 0.245:0.001:0.25, 0.25:0.005:0.5, ...
-    0.5:0.005:0.55, 0.55:0.01:1.5];   %[linspace(0.2,0.85,100), linspace(0.8,0.85,200),linspace(0.85,5,200)];
+phiW_list = [phiW_min:0.03:0.145, 0.145:0.0001:0.150, 0.15:0.005:0.5, ...
+    0.5:0.005:0.55, 0.55:0.01:1.5]; 
 
 %% Run steady state calculations
 tic

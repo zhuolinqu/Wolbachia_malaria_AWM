@@ -1,3 +1,4 @@
+%% bifurcation plot (R0w vs. wolbachia prevalence)
 clearvars; 
 % close all; clc
 tic
@@ -5,10 +6,13 @@ tic
 %% Parameters & numerical config
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
-P.vw = 1; P.vu = 1- P.vw;
-P.ci = 0.8;
+P.vw = 0.95; P.vu = 1- P.vw;
+P.ci = 1;
 %% Sampling
-phiW_list = linspace(0.01,2,10000);
+phiW_min = P.mufw/(P.vw*P.bf);
+phiW_list = [phiW_min:0.001:0.245, 0.245:0.001:0.25, 0.25:0.005:0.5, ...
+    0.5:0.005:0.55, 0.55:0.01:1.5]; 
+% phiW_list = linspace(0.01,2,10000);
 
 %% Run model
 Winf = NaN(3,length(phiW_list));
