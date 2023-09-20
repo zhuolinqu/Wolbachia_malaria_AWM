@@ -14,8 +14,7 @@ Cal_R0_malaria(SU,0,P)
 %% Sampling
 phiW_min = P.mufw/(P.vw*P.bf);
 phiW_list = [phiW_min:0.03:0.415, 0.415:0.001:0.425, ...
-    0.425:0.005:0.55, 0.55:0.05:3];  % for fix immunity = 0.2;
-% phiW_list =  1.5;%0.845980745478233;
+    0.425:0.005:0.55, 0.55:0.05:3];  
 
 %% Run steady state calculations
 Minf = NaN(6,length(phiW_list));

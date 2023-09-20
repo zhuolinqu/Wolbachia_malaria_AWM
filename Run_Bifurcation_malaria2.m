@@ -14,8 +14,7 @@ Cal_R0_malaria(SU,0,P)
 %% Sampling
 phiW_min = P.mufw/(P.vw*P.bf);
 phiW_list = [phiW_min:0.03:0.415, 0.415:0.001:0.425, ...
-    0.425:0.005:0.55, 0.55:0.05:3];  % for fix immunity = 0.2;
-% phiW_list =  1.5;%0.845980745478233;
+    0.425:0.005:0.55, 0.55:0.05:3];
 
 %% Run steady state calculations
 Minf = NaN(6,length(phiW_list));
@@ -30,9 +29,10 @@ for iphi = 1:length(phiW_list)
     end
     Minf(:,iphi) = (SS_mat(:,3)+SS_mat(:,4))./sum(SS_mat(:,1:4),2);
     Stab(:,iphi,:) = SS_mat(:,12:13);
-    R0M(1,iphi) = Cal_R0_malaria(SS_mat(1,6),SS_mat(1,9),P);
-    R0M(2,iphi) = Cal_R0_malaria(SS_mat(2,6),SS_mat(2,9),P);
-    R0M(3,iphi) = Cal_R0_malaria(SS_mat(3,6),SS_mat(3,9),P);
+    SS_matW = EquilibriumState_w(P);
+    R0M(1,iphi) = Cal_R0_malaria(SS_matW(1,1),SS_matW(1,2),P);
+    R0M(2,iphi) = Cal_R0_malaria(SS_matW(2,1),SS_matW(2,2),P);
+    R0M(3,iphi) = Cal_R0_malaria(SS_matW(3,1),SS_matW(3,2),P);
     R0M(4,iphi) = R0M(1,iphi);
     R0M(5,iphi) = R0M(2,iphi);
     R0M(6,iphi) = R0M(3,iphi);
@@ -56,8 +56,9 @@ for iline = 1:6
 end
 ll = legendUnq(f);
 ll = ll([3,4,1,2]);
-legend(ll,'Location','east')
+legend(ll,'Location','nw')
 xlabel('$\mathcal{R}_0^m$')
 ylabel('Malaria prevalence')
-
+title(['$v_w=',num2str(P.vw),',~~ c_i=', num2str(P.ci),'$'])
+xlim([0.5 3])
 

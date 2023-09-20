@@ -7,12 +7,11 @@ tic
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
 P.vw = 0.95; P.vu = 1- P.vw;
-P.ci = 1;
+P.ci = 0.9;
 %% Sampling
 phiW_min = P.mufw/(P.vw*P.bf);
-phiW_list = [phiW_min:0.001:0.245, 0.245:0.001:0.25, 0.25:0.005:0.5, ...
+phiW_list = [0.01:0.001:0.245, 0.245:0.001:0.25, 0.25:0.005:0.5, ...
     0.5:0.005:0.55, 0.55:0.01:3]; 
-% phiW_list = linspace(0.01,2,10000);
 
 %% Run model
 Winf = NaN(3,length(phiW_list));
@@ -33,16 +32,32 @@ elseif P.vw==1
     legend_list = {'WFE','WEE$^-$','WCE'};
 end
 
-figure_setups
+ legend_list = {'Wolbachia stable','Wolbachia unstable'};
+%%
+f = figure_setups;
 hold on
-
 for iline = 1:3  
-    plot(R0w(Winf_stab(iline,:)==1),Winf(iline,Winf_stab(iline,:)==1),'-','DisplayName',legend_list{iline})   
-    plot(R0w(Winf_stab(iline,:)==0),Winf(iline,Winf_stab(iline,:)==0),'--','DisplayName',legend_list{iline})
+    group1 = find((Winf_stab(iline,:,1)==1));
+    group2 = find((Winf_stab(iline,:,1)==0));
+    plot(R0w(Winf_stab(iline,:)==1),Winf(iline,Winf_stab(iline,:)==1),'-','Color',[0 0.4470 0.7410],'DisplayName',legend_list{1})   
+    plot(R0w(Winf_stab(iline,:)==0),Winf(iline,Winf_stab(iline,:)==0),'-.','Color',[0.4660 0.6740 0.1880],'DisplayName',legend_list{2})
 end
-legend
+ll = legendUnq(f);
+legend(ll,'Location','west')
 xlabel('$\mathcal{R}_0^w$')
 ylabel('Wolbachia prevalence')
 axis([0 1.2 0 1.1])
+
+if P.vw<1
+    text(0.25,0.05,'WFE')
+    text(0.8,0.3,'WEE$^-$') 
+    text(0.8,0.9,'WEE$^+$') 
+elseif P.vw==1
+    text(0.25,0.05,'WFE')
+    text(0.8,0.4,'WEE$^-$')  
+    text(0.8,0.95,'WCE') 
+    % legend_list = {'WFE','WEE$^-$','WCE'};
+end
+
 title(['$v_w=',num2str(P.vw),',~~ c_i=', num2str(P.ci),'$'])
 toc

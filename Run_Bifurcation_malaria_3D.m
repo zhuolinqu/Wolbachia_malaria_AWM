@@ -1,5 +1,5 @@
 %% bifurcation plot (R0w vs. malaria prevalence vs. wolbachia prevalence)
-clearvars;
+clear all
 % close all; clc
 tic
 %% Parameters & numerical config
@@ -8,8 +8,8 @@ P = Baseline_params_stephensi(P);
 P.vw = 0.95; P.vu = 1- P.vw;
 %% Sampling
 phiW_min = P.mufw/(P.vw*P.bf);
-phiW_list = [phiW_min:0.03:0.145, 0.145:0.0001:0.150, 0.15:0.005:0.5, ...
-    0.5:0.005:0.55, 0.55:0.01:1.5]; 
+phiW_list = [phiW_min:0.03:0.415, 0.415:0.001:0.425, ...
+    0.425:0.005:0.55, 0.55:0.05:3];
 
 %% Run steady state calculations
 tic
@@ -17,6 +17,7 @@ Minf = NaN(6,length(phiW_list));
 Winf = NaN(6,length(phiW_list));
 Stab = NaN(6,length(phiW_list),2);
 R0w = NaN(1,length(phiW_list));
+R0M = NaN(6,length(phiW_list));
 for iphi = 1:length(phiW_list)
     P.phiW = phiW_list(iphi);
     if iphi == 1
@@ -28,9 +29,16 @@ for iphi = 1:length(phiW_list)
     Winf(:,iphi) = sum(SS_mat(:,9:11),2)./sum(SS_mat(:,6:11),2);
     Stab(:,iphi,:) = SS_mat(:,12:13);
     R0w(:,iphi) = Cal_R0_wolbachia(P);
+    SS_matW = EquilibriumState_w(P);
+    R0M(1,iphi) = Cal_R0_malaria(SS_matW(1,1),SS_matW(1,2),P);
+    R0M(2,iphi) = Cal_R0_malaria(SS_matW(2,1),SS_matW(2,2),P);
+    R0M(3,iphi) = Cal_R0_malaria(SS_matW(3,1),SS_matW(3,2),P);
+    R0M(4,iphi) = R0M(1,iphi);
+    R0M(5,iphi) = R0M(2,iphi);
+    R0M(6,iphi) = R0M(3,iphi);
     SS_mat_old = SS_mat;
 end
-save('Bifurcation_3D_low.mat')
+% save('Bifurcation_3D_low.mat')
 toc
 %% plotting
 % load('Bifurcation_3D.mat')
@@ -57,15 +65,33 @@ end
 ll = legendUnq(f);
 ll = ll([3,4,1,2]);
 legend(ll,'Location','east')
+%% plotting
 
-%% 
-% legend_list = {'no malaria and no Wol.','no malaria and unstable Wol.','no malaria and stable Wol',...
-%     'malaria endemic and no Wol','malaria endemic and unstable Wol','malaria endemic and stable Wol'};
-% for iline = 1:6
-%     plot3(Winf(iline,Stab(iline,:)==1),R0w(Stab(iline,:)==1),Minf(iline,Stab(iline,:)==1),'-','DisplayName',legend_list{iline})
-%     plot3(Winf(iline,Stab(iline,:)==0),R0w(Stab(iline,:)==0),Minf(iline,Stab(iline,:)==0),'--','DisplayName',legend_list{iline})
-% end
-% legend
+f = figure_setups; hold on;
+set(f,'WindowState','maximized') % make the plot full screen
+view([65,45])
+axis([0 1 0.5 5 0 1])
+xlabel('Wolbachia prevalence')
+ylabel('$R_0^m$')
+zlabel('Malaria prevalence $(A_H+D_H)$')
+grid on
+legend_list = {'stable','Wolbachia-unstable (malaria stable)','malaria-unstable (Wolbachia-stable)',...
+    'malaria-unstable \& Wolbachia-unstable'};
+for iline = 1:6
+    group1 = find((Stab(iline,:,1)==1).*(Stab(iline,:,2)==1));
+    group2 = find((Stab(iline,:,1)==1).*(1-Stab(iline,:,2)==1));
+    group3 = find((1-Stab(iline,:,1)==1).*(Stab(iline,:,2)==1));
+    group4 = find((1-Stab(iline,:,1)==1).*(1-Stab(iline,:,2)==1));   
+
+    plot3(Winf(iline,group1),R0M(iline, group1),Minf(iline,group1),'-','Color',[0 0.4470 0.7410],'DisplayName',legend_list{1})
+    plot3(Winf(iline,group2),R0M(iline, group2),Minf(iline,group2),'-.','Color',[0.4660 0.6740 0.1880],'DisplayName',legend_list{2})
+    plot3(Winf(iline,group3),R0M(iline, group3),Minf(iline,group3),'--','Color',[0.8500 0.3250 0.0980],'DisplayName',legend_list{3})
+    plot3(Winf(iline,group4),R0M(iline, group4),Minf(iline,group4),':','Color',[0.6350 0.0780 0.1840],'DisplayName',legend_list{4})
+end
+ll = legendUnq(f);
+ll = ll([3,4,1,2]);
+legend(ll,'Location','east')
+
 
 % %% solution trajectory
 % P = Baseline_params_stephensi(P);
