@@ -1,3 +1,4 @@
 *.mat
 *.svg
 Bifurcation_3D.mat
+Results/*
