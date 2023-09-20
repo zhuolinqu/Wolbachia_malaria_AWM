@@ -1,11 +1,11 @@
 %% bifurcation plot (R0w vs. malaria prevalence vs. wolbachia prevalence)
 clearvars;
-close all; clc
+% close all; clc
 tic
 %% Parameters & numerical config
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
-P.vw = 0.97; P.vu = 1- P.vw;
+P.vw = 0.95; P.vu = 1- P.vw;
 %% Sampling
 phiW_min = P.mufw/(P.vw*P.bf);
 phiW_list = [phiW_min:0.03:0.145, 0.145:0.0001:0.150, 0.15:0.005:0.5, ...
@@ -30,7 +30,7 @@ for iphi = 1:length(phiW_list)
     R0w(:,iphi) = Cal_R0_wolbachia(P);
     SS_mat_old = SS_mat;
 end
-save('Bifurcation_3D.mat')
+save('Bifurcation_3D_low.mat')
 toc
 %% plotting
 % load('Bifurcation_3D.mat')

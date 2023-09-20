@@ -109,12 +109,13 @@ end
 %% (row 4) EE-DFE: malaria endemic and no Wolbachia
 SU = Wol_DFE(1); SW = Wol_DFE(2); % SW = 0;
 R0m = Cal_R0_malaria(SU,SW,P);
+
 if R0m>1
     SH0 = P.gH/P.muH-1; EH0 = 1; AH0 = 0; DH0 = 0; Ie0 = 0;
     SU0 = SU; EU0 = 0; IU0 = 0; SW0 = 0; EW0 = 0; IW0 = 0;
     yinit = [SH0; EH0; AH0; DH0; Ie0; SU0; EU0; IU0; SW0; EW0; IW0];
     options = odeset('AbsTol',1e-10,'RelTol',1e-10);
-    [~,y] = ode45(@BaseModel,linspace(0,5000,50),yinit,options,P);
+    [~,y] = ode45(@BaseModel,linspace(0,10^4,50),yinit,options,P);
     SS_mat(4,1:11) = y(end,:);
 
     SU_frac = y(end,6)/sum(y(end,6:8),2);
@@ -147,7 +148,7 @@ if R0m>1 && ~isnan(NU) % if Wolbachia EE+ exist
     end
     options = odeset('AbsTol',1e-10,'RelTol',1e-10);
     for irun = 1:50
-        [~,y] = ode45(@BaseModel,linspace(0,1000,50),yinit,options,P);
+        [~,y] = ode45(@BaseModel,linspace(0,10^4,50),yinit,options,P);
         if norm(y(end,:)-y(end-1,:))<10^-5
             break
         end

@@ -1,8 +1,8 @@
 %% Malaria parameters taken from Qu and Patterson et al 2023 (except as noted)
-P.bm = 0.6;
+P.bm = 0.7;
 P.bh = 5;
 
-P.betaM = 0.2;
+P.betaM = 0.3;
 P.betaD = 0.35;
 P.betaA = 0.03;
 
@@ -20,9 +20,9 @@ P.cD = 0.05;
 P.de = 5*365;
 P.gamma = 10;
 
-% Simple birth/death parameters (ave lifespan = 80)
-P.gH = 2.5;
-P.muH = 1/(60*365);
+% Simple birth/death parameters (ave lifespan = 60)
+P.gH = 1;
+P.muH = 1/(65*365);
 
 % sigmoid parameters, fitted, taken from malaria simulation project
 x = [2.567957971786876   2.487540758554113   3.649596968324358   1.395449806257184   2.332526365071812   2.150211932758257];
@@ -49,9 +49,13 @@ P.psif0 = 0.01; P.psif1 = 1;
 % P.psif0 = 0.9; P.psif1 = 0.9; 
 
 % Fixed low immunity (max=min=constant)
-% P.phif0 = 0.2; P.phif1 = 0.2; 
-% P.rhof0 = 0.2; P.rhof1 = 0.2; 
-% P.psif0 = 0.2; P.psif1 = 0.2; 
+% P.phif0 = 0.05; P.phif1 = 0.05; 
+% P.rhof0 = 0.05; P.rhof1 = 0.05; 
+% P.psif0 = 0.05; P.psif1 = 0.05; 
+
+% P.phif0 = 0.2917; P.phif1 = 0.2917;
+% P.rhof0 = 0.0909; P.rhof1 = 0.0909; 
+% P.psif0 = 0.2846; P.psif1 = 0.2846; 
 
 [P.rho, P.phi, P.psi] = sigmoid_prob(0, P);
 

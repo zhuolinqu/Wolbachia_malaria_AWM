@@ -1,14 +1,16 @@
 clearvars; 
-% close all; clc
+% close all; 
+clc
 
 tic
 %% Parameters
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
-P.vw = 0.97; P.vu = 1- P.vw;
+% P.phiW = 1.1;
+P.vw = 0.95; P.vu = 1- P.vw;
 %% Run model
 % Time frame
-tspan = [0 5000];
+tspan = [0 1000];
 
 % Initial conditions
 [R0w, G0w, G0u] = Cal_R0_wolbachia(P);
@@ -23,9 +25,12 @@ yinit = SS_mat(4,1:11);
 % SU0 = 1;
 % EU0 = 0;
 % IU0 = 0;
-% SW0 = 0;% P.Kf*(1-1/G0w);
+% SW0 = 0;% P.Kf*(1-1/G0w); 
 % EW0 = 0;
 % IW0 = 0;
+% yinit(9) = yinit(9)*0.8;
+% yinit(10) = yinit(10)*0.8;
+% yinit(11) = yinit(11)*0.8;
 
 % yinit = [SH0; EH0; AH0; DH0; Ie0; ...
 %         SU0; EU0; IU0; ...
@@ -52,6 +57,8 @@ NH = SH+EH+AH+DH;
 NW = SW+EW+IW;
 NU = SU+EU+IU;
 NM = NW+NU;
+
+%% plot solutions in time
 figure_setups;
 subplot(2,2,1)
 plot(t,[SH EH AH DH])
@@ -79,15 +86,27 @@ xlabel('Time, days')
 ylabel('Population (mosquito)')
 legend('$S_W$','$E_W$','$I_W$')
 ylim([0 P.Kf])
-%%
+
+%% plot diseased groups only
 figure_setups;
+subplot(1,2,1)
 plot(t,[EH AH DH])
 xlabel('Time, days')
-ylabel('Proportion of population')
+ylabel('Population (human)')
+legend('$E_H$','$A_H$','$D_H$')
+subplot(1,2,2)
+plot(t,[EH AH DH]./NH)
+xlabel('Time, days')
+ylabel('Proportion (human)')
 legend('$E_H$','$A_H$','$D_H$')
 
-%%
-% figure_setups;
-% plot(t,NW./(NW+NU))
-% xlabel('Time, days')
-% ylabel('Wolbachia prevalence')
+%% plot wolbachia prevalence
+figure_setups;
+plot(t,NW./(NW+NU))
+xlabel('Time, days')
+ylabel('Wolbachia prevalence')
+%% plot sigmoids
+figure_setups;
+[rho, phi, psi] = sigmoid_prob(Ie./NH, P);
+plot(t,rho,t,phi,t,psi)
+legend('rho','phi','psi')
