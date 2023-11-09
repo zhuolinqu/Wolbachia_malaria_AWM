@@ -2,14 +2,15 @@
 clear all
 % close all; clc
 tic
+format long
 %% Parameters & numerical config
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
 P.vw = 0.95; P.vu = 1- P.vw;
 %% Sampling
 phiW_min = P.mufw/(P.vw*P.bf);
-phiW_list = [phiW_min:0.03:0.415, 0.415:0.001:0.425, ...
-    0.425:0.005:0.55, 0.55:0.05:3];
+phiW_list = [linspace(phiW_min,0.420999557717824,3),linspace(0.420999557717824,0.498673153471915,5), ...
+    linspace(0.498673153471915,1.160720919946926,10), linspace(1.16191258002403,2.211189739053516,10), linspace(2.211410880141531,3,5), 100];
 
 %% Run steady state calculations
 tic
@@ -44,10 +45,11 @@ toc
 % load('Bifurcation_3D.mat')
 f = figure_setups; hold on;
 set(f,'WindowState','maximized') % make the plot full screen
+% set(f,'Renderer','painters')
 view([65,45])
-axis([0 1 0 1.2 0 1])
+axis([0 1 0 1.2 0 0.7])
 xlabel('Wolbachia prevalence')
-ylabel('$R_0^w$')
+ylabel('$\mathcal{R}_0^w$')
 zlabel('Malaria prevalence $(A_H+D_H)$')
 grid on
 legend_list = {'stable','Wolbachia-unstable (malaria stable)','malaria-unstable (Wolbachia-stable)',...
@@ -65,15 +67,18 @@ end
 ll = legendUnq(f);
 ll = ll([3,4,1,2]);
 legend(ll,'Location','east')
-%% plotting
+% print(gcf,'-vector', '-depsc', 'Bifurcation_system.eps')
 
+
+%% plotting
 f = figure_setups; hold on;
-set(f,'WindowState','maximized') % make the plot full screen
-view([65,45])
-axis([0 1 0.5 5 0 1])
-xlabel('Wolbachia prevalence')
-ylabel('$R_0^m$')
-zlabel('Malaria prevalence $(A_H+D_H)$')
+% set(f,'WindowState','maximized') % make the plot full screen
+% set(f,'Renderer','painters')
+view([88,20])
+axis([0 1 0.5 4.7 0 0.7])
+xlabel('Wol. prevalence')
+ylabel('$\mathcal{R}_0^m$')
+zlabel('Malaria prevalence')
 grid on
 legend_list = {'stable','Wolbachia-unstable (malaria stable)','malaria-unstable (Wolbachia-stable)',...
     'malaria-unstable \& Wolbachia-unstable'};
@@ -82,16 +87,16 @@ for iline = 1:6
     group2 = find((Stab(iline,:,1)==1).*(1-Stab(iline,:,2)==1));
     group3 = find((1-Stab(iline,:,1)==1).*(Stab(iline,:,2)==1));
     group4 = find((1-Stab(iline,:,1)==1).*(1-Stab(iline,:,2)==1));   
-
-    plot3(Winf(iline,group1),R0M(iline, group1),Minf(iline,group1),'-','Color',[0 0.4470 0.7410],'DisplayName',legend_list{1})
+    plot3(Winf(iline,group1),R0M(iline, group1),Minf(iline,group1),'-','Color',[0 0.4470 0.7410],'DisplayName',legend_list{1});
     plot3(Winf(iline,group2),R0M(iline, group2),Minf(iline,group2),'-.','Color',[0.4660 0.6740 0.1880],'DisplayName',legend_list{2})
     plot3(Winf(iline,group3),R0M(iline, group3),Minf(iline,group3),'--','Color',[0.8500 0.3250 0.0980],'DisplayName',legend_list{3})
-    plot3(Winf(iline,group4),R0M(iline, group4),Minf(iline,group4),':','Color',[0.6350 0.0780 0.1840],'DisplayName',legend_list{4})
+    plot3(Winf(iline,group4),R0M(iline, group4),Minf(iline,group4),':','Color',[0.6350 0.0780 0.1840],'DisplayName',legend_list{4});
 end
 ll = legendUnq(f);
 ll = ll([3,4,1,2]);
-legend(ll,'Location','east')
-
+legend(ll,'Location','best')
+legend off
+% print(gcf,'-vector', '-depsc', 'M_bifur2.eps')
 
 % %% solution trajectory
 % P = Baseline_params_stephensi(P);

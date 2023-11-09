@@ -53,5 +53,7 @@ ll = ll([3,4,1,2]);
 legend(ll,'Location','east')
 xlabel('$R_0^w$')
 ylabel('Malaria prevalence')
+ylim([0 0.8])
+print(gcf,'-vector', '-depsc', 'Results/bifur_fixed.eps')
 
-
+% print(gcf,'-vector', '-depsc', 'Results/bifur_dynamic.eps')

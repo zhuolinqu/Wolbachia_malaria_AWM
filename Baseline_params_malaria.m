@@ -53,9 +53,10 @@ P.psif0 = 0.01; P.psif1 = 1;
 % P.rhof0 = 0.05; P.rhof1 = 0.05; 
 % P.psif0 = 0.05; P.psif1 = 0.05; 
 
-% P.phif0 = 0.2917; P.phif1 = 0.2917;
-% P.rhof0 = 0.0909; P.rhof1 = 0.0909; 
-% P.psif0 = 0.2846; P.psif1 = 0.2846; 
+% sigmod parameters for comparison
+% P.phif0 = 0.329292647824602; P.phif1 = 0.329292647824602; 
+% P.rhof0 = 0.118177744193668; P.rhof1 = 0.118177744193668; 
+% P.psif0 = 0.327791291717994; P.psif1 = 0.327791291717994; 
 
 [P.rho, P.phi, P.psi] = sigmoid_prob(0, P);
 

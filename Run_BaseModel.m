@@ -6,7 +6,7 @@ tic
 %% Parameters
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
-% P.phiW = 1.1;
+P.phiW = 0.7;
 P.vw = 0.95; P.vu = 1- P.vw;
 %% Run model
 % Time frame
@@ -16,7 +16,7 @@ tspan = [0 1000];
 [R0w, G0w, G0u] = Cal_R0_wolbachia(P);
 
 SS_mat = EquilibriumState_m(P);
-yinit = SS_mat(4,1:11);
+yinit = SS_mat(6,1:11);
 % SH0 = 0.5*P.gH/P.muH;
 % EH0 = 0.5*P.gH/P.muH;
 % AH0 = 0;
