@@ -19,16 +19,14 @@ phiw = 60; % per capita egg laying rate, Wolbachia infected
 phiwp = psi/(psi+mua)*(sig + mufwp)/(sig + mufw)*mufwp/mufw*phiw;
 phiwpp = sig/(sig+mufwp)*phiwp;
 
-
-
-P.vw = 1;
+P.vw = 1; % [SA]
 P.vu = 1-P.vw;
 P.bf = 0.5;
 P.Kf = P.bf*psi/mufup*Ka;
 P.ci = 0; % new parameter
 
-P.phiU = phiupp;
-P.phiW = phiwpp;
+P.phiU = phiupp; % [SA]
+P.phiW = phiwpp; % [SA] 
 P.mufu = mufup;
 P.mufw = mufwp;
 

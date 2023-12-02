@@ -2,22 +2,20 @@
 P.bm = 0.7;
 P.bh = 5;
 
-P.betaM = 0.3;
-P.betaD = 0.35;
-P.betaA = 0.03;
+P.betaM = 0.3; P.betaM_lower = 0.21; P.betaM_upper = 0.51;
+P.betaD = 0.35; P.betaD_lower = 0.25; P.betaD_upper = 0.6;
+P.betaA = 0.03; P.betaA_lower = 0.02; P.betaA_upper = 0.05;
 
 P.rD = 1/33.5; % Updated based on treatment assumption using malaria therapy data % 1/180; original Qu and Patterson et al
+P.rD_lower = 1/48; P.rD_upper = 1/20;
 P.rA = 1/85; % Updated  using malaria therapy data  % 1/360; original Qu and Patterson et al
+P.rA_lower = 1/121; P.rA_upper = 1/50;
 
 P.h = 1/26; % Updated based on malaria therapy data % 1/15; original Qu and Patterson et al
+P.h_lower = 1/37; P.h_upper = 1/15;
 P.muD = 0;
 
-P.cS = 0.75;
-P.cE = 0.1;
-P.cA = 0.1;
-P.cD = 0.05;
-
-P.de = 5*365;
+P.de = 5*365; P.de_lower = 3.25*365; P.de_upper = 10.5*365;
 P.gamma = 10;
 
 % Simple birth/death parameters (ave lifespan = 60)
@@ -59,6 +57,29 @@ P.psif0 = 0.01; P.psif1 = 1;
 % P.psif0 = 0.327791291717994; P.psif1 = 0.327791291717994; 
 
 [P.rho, P.phi, P.psi] = sigmoid_prob(0, P);
+
+low = 0.7; high = 1.7;
+
+P.phis2_lower = P.phis2*low; P.phis2_upper = P.phis2*high;
+P.phir2_lower = P.phir2*low; P.phir2_upper = P.phir2*high;
+P.rhos2_lower = P.rhos2*low; P.rhos2_upper = P.rhos2*high;
+P.rhor2_lower = P.rhor2*low; P.rhor2_upper = P.rhor2*high;
+P.psis2_lower = P.psis2*low; P.psis2_upper = P.psis2*high;
+P.psir2_lower = P.psir2*low; P.psir2_upper = P.psir2*high;
+
+%%
+P.cS = 0.75;
+P.cE = 0.1;
+P.cA = 0.1;
+P.cD = 0.05;
+
+P.cS_lower = P.cS*low; P.cS_upper = P.cS*high;
+P.cE_lower = P.cE*low; P.cE_upper = P.cE*high;
+P.cA_lower = P.cA*low; P.cA_upper = P.cA*high;
+P.cD_lower = P.cD*low; P.cD_upper = P.cD*high;
+
+%% dummy varaible for eFast SA
+P.dummy = 1; P.dummy_lower = 0.7; P.dummy_upper = 1.7; % dummy parameter for global SA eFAST - values from original code 
 
 %%
 % figure_setups; hold on

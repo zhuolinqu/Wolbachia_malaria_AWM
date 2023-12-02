@@ -2,7 +2,7 @@ function P = Baseline_params_stephensi(P)
 %% Mosquito parameters from Florez et al paper 
 mu_fu = 1/12; % Death rate for females Fu
 mu_fw = 1/14; % Death rate for females Fw
-phi_u = 50/12; % Per capita egg-laying rate
+phi_u = 60/12; %50/12; % Per capita egg-laying rate
 phi_w = 50/14; % Per capita egg-laying rate
 psi_pr = 1/13; % from egg to larvae to adults = 1/(10+3) % psi = 1/10; % FIXED; was 1/18 in Florez et al paper 
 
@@ -22,20 +22,22 @@ mu_aw = psi_pr*(1/temp -1);
 phi_u_pr = phi_u*psi_pr/(psi_pr+mu_au);
 phi_w_pr = phi_w*psi_pr/(psi_pr+mu_aw);
 
-P.phiU = phi_u_pr;
-P.phiW = phi_w_pr;
+P.phiU = phi_u_pr; P.phiU_lower = 1.7; P.phiU_upper = 4.2;
+P.phiW = phi_w_pr; P.phiW_lower = 1; P.phiW_upper = 2.4;
+P.mufu = mu_fu; % = 1/12
+P.mufu_lower = 1/17; P.mufu_upper = 1/7;
+P.mufw = mu_fw; % = 1/14
+P.mufw_lower = 1/20; P.mufw_upper = 1/8.2;
 
-P.mufu = mu_fu; % 1/ time spent in adult females, used for malaria model
-P.mufw = mu_fw;
-
-P.vw = 1;
+P.vw = 0.95; P.vw_lower = 0.95; P.vw_upper = 1;
 P.vu = 1-P.vw;
 P.bf = 0.5;
 P.Kf = 3e5;
 P.ci = 1; % new parameter
+P.ci_lower = 0.98; P.ci_upper = 1; 
 
 %% New parameters linking malaria and Wolbachia
-P.sigma = 1/10;
-P.alpha = 0;
+P.sigma = 1/10; P.sigma_lower = 1/14.3; P.sigma_upper = 1/5.9;
+P.alpha = 0; P.alpha_lower = 0; P.alpha_upper = 0.29;
 
 end

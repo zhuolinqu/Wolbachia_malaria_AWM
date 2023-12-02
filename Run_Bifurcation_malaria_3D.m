@@ -3,11 +3,11 @@ clear all
 % close all; clc
 tic
 format long
-%% Parameters & numerical config
+% Parameters & numerical config
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
 P.vw = 0.95; P.vu = 1- P.vw;
-%% Sampling
+% Sampling
 phiW_min = P.mufw/(P.vw*P.bf);
 phiW_list = [linspace(phiW_min,0.420999557717824,3),linspace(0.420999557717824,0.498673153471915,5), ...
     linspace(0.498673153471915,1.160720919946926,10), linspace(1.16191258002403,2.211189739053516,10), linspace(2.211410880141531,3,5), 100];
@@ -39,10 +39,10 @@ for iphi = 1:length(phiW_list)
     R0M(6,iphi) = R0M(3,iphi);
     SS_mat_old = SS_mat;
 end
-% save('Bifurcation_3D_low.mat')
+% save('Bifurcation_3D.mat')
 toc
 %% plotting
-% load('Bifurcation_3D.mat')
+load('Bifurcation_3D.mat')
 f = figure_setups; hold on;
 set(f,'WindowState','maximized') % make the plot full screen
 % set(f,'Renderer','painters')
@@ -67,7 +67,7 @@ end
 ll = legendUnq(f);
 ll = ll([3,4,1,2]);
 legend(ll,'Location','east')
-% print(gcf,'-vector', '-depsc', 'Bifurcation_system.eps')
+print(gcf,'-vector', '-depsc', 'Bifurcation_system.eps')
 
 
 %% plotting
