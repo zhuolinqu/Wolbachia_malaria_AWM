@@ -1,4 +1,6 @@
 *.mat
 *.svg
+*.eps
+*.fig
 Bifurcation_3D.mat
 Results/*
