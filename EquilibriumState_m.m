@@ -33,7 +33,7 @@ end
 
 %% Check
 if G0u<1 || G0w<1
-    keyboard
+    disp('mosquito extinction')
     % mosquito extinction, check parameter range!
 end
 

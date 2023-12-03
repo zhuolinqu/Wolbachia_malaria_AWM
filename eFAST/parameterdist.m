@@ -14,7 +14,9 @@ switch lower(type)
         end
     case {'triangular'}
         for k=1:nparam %loop through parameters
-            pd = makedist('Triangular','A',pmin(k),'B',pmean(k),'C',pmax(k));  % bound [A,C], peak at B
+            aa = min(pmin(k),pmax(k));
+            cc = max(pmin(k),pmax(k)); 
+            pd = makedist('Triangular','A',aa,'B',pmean(k),'C',cc);  % bound [A,C], peak at B
             Xdist(:,k) = icdf(pd,X(:,k));
         end
     case {'norm'}

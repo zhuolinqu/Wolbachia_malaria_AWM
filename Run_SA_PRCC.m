@@ -1,12 +1,12 @@
 %% global SA using PRCC
 
-close all
+% close all
 clearvars
 clc
 format long
 
 % SA setting 
-lQ = {'bifur_region'};  % 'R0w', 'R0m', 'bifur_label'
+lQ = {'bifur_region'};  % 'R0w', 'R0m', 'bifur_region'
 Size_QOI = length(lQ); % length of the QOI. Default = 1, unless it is an age distribution, or wants to test multiple QOIs at once
 time_points = 1;
 lP_list = {'h','rA','rD','phiU','phiW','mufu','mufw',...
@@ -17,13 +17,16 @@ Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
 pmin = NaN(length(lP_list),1); pmax = pmin; pmean = pmin;
 for iP = 1:length(lP_list)
-    pmin(iP,1) = P.([lP_list{iP},'_lower']);
-    pmax(iP,1) = P.([lP_list{iP},'_upper']);
-    pmean(iP,1) = P.([lP_list{iP}]);
+    param = lP_list{iP};
+    % if strcmp(param,'phiW'); param = 'c_phi'; end
+    % if strcmp(param,'mufw'); param = 'c_muf'; end
+    pmin(iP,1) = P.([param,'_lower']);
+    pmax(iP,1) = P.([param,'_upper']);
+    pmean(iP,1) = P.(param);
 end
 
 % PRCC config
-NS = 1000; % number of samples, min = k+1, 100~1000
+NS = 30000; % number of samples, min = k+1, 100~1000
 k = length(lP_list); % # of POIs
 % Pre-allocation
 Size_timepts = length(time_points); % # of time points to check QOI value;
@@ -31,20 +34,22 @@ Y = NaN(NS,Size_timepts,Size_QOI);  % For each model evaluation, the QOI has dim
 
 %% Generate parameter samples, stored in matrix X
 direc = 'Results/SA/SA_PRCC/';
-if strcmp(lQ,'bifur_region')
+% if strcmp(lQ,'bifur_region')
     sample_file_name = [direc,'PRCC_sample_',num2str(NS),'_',num2str(k),'_unif.mat'];
-else
-    sample_file_name = [direc,'PRCC_sample_',num2str(NS),'_',num2str(k),'.mat'];
-end
+% else
+%     sample_file_name = [direc,'PRCC_sample_',num2str(NS),'_',num2str(k),'.mat'];
+% end
 if ~exist(sample_file_name,'file')
     disp('generate parameter samples...')
     LHS_raw = lhsdesign(NS,k); % uniform random draw with LHS sampling in [0,1]
-    if strcmp(lQ,'bifur_region')
+    % if strcmp(lQ,'bifur_region')
         X = parameterdist(LHS_raw,pmax,pmin,pmean,1,'unif'); % 'unif' 'triangular'
-    else
-        X = parameterdist(LHS_raw,pmax,pmin,pmean,1,'triangular'); % 'unif' 'triangular'
-    end
-    save(sample_file_name,'X')
+    % else
+    %     X = parameterdist(LHS_raw,pmax,pmin,pmean,1,'triangular'); % 'unif' 'triangular'
+    % end
+    % X = adjust_samples_PRCC(X,lP_list); % adjust samples so that it fits the biological assumptions on fitness cost
+    % save(sample_file_name,'X')
+    disp('generate parameter samples... DONE')
 else
     disp('load parameter samples...')
     load([direc,'PRCC_sample_',num2str(NS),'_',num2str(k),'.mat'],'X')
@@ -129,4 +134,8 @@ for iQOI = 1:Size_QOI_plot
     saveas(gcf,[direc,'PRCC_result_',num2str(NS),'_',num2str(k),'_',lQ{QOI_plot(iQOI)},'.eps'],'epsc')
 end
 
+%%
+figure_setups;
+hist(Y)
+title(['max=',num2str(max(Y)),', min=',num2str(min(Y))])
 

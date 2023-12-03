@@ -4,10 +4,16 @@ if flag_dollar
 end
 
 for ip = 1:length(lP_list)
-    lP_list{ip} = strrep(lP_list{ip},'\dac','d_e');
+    lP_list{ip} = strrep(lP_list{ip},'\de','d_e');
     lP_list{ip} = strrep(lP_list{ip},'\rD','r_D');
     lP_list{ip} = strrep(lP_list{ip},'\rA','r_A');
     lP_list{ip} = strrep(lP_list{ip},'\mufu','\mu_{fu}');
+    lP_list{ip} = strrep(lP_list{ip},'\mufw','\mu_{fw}');
+    lP_list{ip} = strrep(lP_list{ip},'\phiW','\phi_w');
+    lP_list{ip} = strrep(lP_list{ip},'\phiU','\phi_u');
+    lP_list{ip} = strrep(lP_list{ip},'\vw','v_w');
+    lP_list{ip} = strrep(lP_list{ip},'\ci','c_i');
+    lP_list{ip} = strrep(lP_list{ip},'\c','c_');
     lP_list{ip} = strrep(lP_list{ip},'betaM','beta_M');
     lP_list{ip} = strrep(lP_list{ip},'betaA','beta_A');
     lP_list{ip} = strrep(lP_list{ip},'betaD','beta_D');
@@ -17,11 +23,8 @@ for ip = 1:length(lP_list)
     lP_list{ip} = strrep(lP_list{ip},'rhos2','rho(s_2)');
     lP_list{ip} = strrep(lP_list{ip},'phir2','phi(r_2)');
     lP_list{ip} = strrep(lP_list{ip},'phis2','phi(s_2)');
-
+    lP_list{ip} = strrep(lP_list{ip},'\h','h');
     lP_list{ip} = strrep(lP_list{ip},'\dummy','dummy');
-    lP_list{ip} = strrep(lP_list{ip},'\v0','\nu_0');
-    lP_list{ip} = strrep(lP_list{ip},'\w','w');
-    lP_list{ip} = strrep(lP_list{ip},'\etas','\eta_s');
 end
 
 lQ_title = lQ;

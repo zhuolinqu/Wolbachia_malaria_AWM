@@ -33,7 +33,7 @@ if b^2-4*a*c<0 || R0w>1
 elseif P.vw==1 && R0w<1-P.ci
     Fu = NaN; Fw = NaN;
 elseif P.vw<1
-    r = (-b - sqrt(b^2-4*a*c))/(2*a);
+    r = min((-b - sqrt(b^2-4*a*c))/(2*a),(-b + sqrt(b^2-4*a*c))/(2*a));
     Fu = P.Kf/(1+r*P.mufu/P.mufw)*(1-1/G0w);
     Fw = r*P.mufu/P.mufw*Fu;
     SS_mat(2,end) = 0;
@@ -62,7 +62,7 @@ elseif P.vw == 1 % CIE
         SS_mat(3,end) = 0;
     end
 elseif P.vw<1
-    r = (-b + sqrt(b^2-4*a*c))/(2*a);
+    r = max((-b + sqrt(b^2-4*a*c))/(2*a),(-b - sqrt(b^2-4*a*c))/(2*a));
     Fu = P.Kf/(1+r*P.mufu/P.mufw)*(1-1/G0w);
     Fw = r*P.mufu/P.mufw*Fu;
     SS_mat(3,end) = 1;

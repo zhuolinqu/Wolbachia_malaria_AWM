@@ -22,19 +22,25 @@ mu_aw = psi_pr*(1/temp -1);
 phi_u_pr = phi_u*psi_pr/(psi_pr+mu_au);
 phi_w_pr = phi_w*psi_pr/(psi_pr+mu_aw);
 
-P.phiU = phi_u_pr; P.phiU_lower = 1.7; P.phiU_upper = 4.2;
-P.phiW = phi_w_pr; P.phiW_lower = 1; P.phiW_upper = 2.4;
 P.mufu = mu_fu; % = 1/12
 P.mufu_lower = 1/17; P.mufu_upper = 1/7;
 P.mufw = mu_fw; % = 1/14
 P.mufw_lower = 1/20; P.mufw_upper = 1/8.2;
+% P.c_muf = (1/P.mufu-1/P.mufw)/(1/P.mufu); P.c_muf_lower = P.c_muf*0.7; P.c_muf_upper = P.c_muf*1.7; 
+% fraction of reduction in life span (is a negative, W slightly increase survivalship for stephensi)
 
-P.vw = 0.95; P.vw_lower = 0.95; P.vw_upper = 1;
+P.phiU = phi_u_pr; P.phiU_lower = 1.7; P.phiU_upper = 4.2;
+P.phiW = phi_w_pr;
+P.phiW_lower = 1; P.phiW_upper = 2.4;
+% P.c_phi = (P.phiU/P.mufu-P.phiW/P.mufw)/(P.phiU/P.mufu); P.c_phi_lower = P.c_phi*0.7; P.c_phi_upper = P.c_phi*1.7; 
+% fraction of reduction in the offspring
+
+P.vw = 0.95; P.vw_lower = 0.1; P.vw_upper = 1;
 P.vu = 1-P.vw;
 P.bf = 0.5;
 P.Kf = 3e5;
 P.ci = 1; % new parameter
-P.ci_lower = 0.98; P.ci_upper = 1; 
+P.ci_lower = 0.1; P.ci_upper = 1; 
 
 %% New parameters linking malaria and Wolbachia
 P.sigma = 1/10; P.sigma_lower = 1/14.3; P.sigma_upper = 1/5.9;
