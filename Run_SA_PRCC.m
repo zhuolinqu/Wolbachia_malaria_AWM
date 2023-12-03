@@ -6,6 +6,7 @@ clc
 format long
 
 % SA setting 
+P.flag_adjust = 0; % if we want to adjust samples to satisfy constraints
 lQ = {'bifur_region'};  % 'R0w', 'R0m', 'bifur_region'
 Size_QOI = length(lQ); % length of the QOI. Default = 1, unless it is an age distribution, or wants to test multiple QOIs at once
 time_points = 1;
@@ -18,15 +19,17 @@ P = Baseline_params_stephensi(P);
 pmin = NaN(length(lP_list),1); pmax = pmin; pmean = pmin;
 for iP = 1:length(lP_list)
     param = lP_list{iP};
-    % if strcmp(param,'phiW'); param = 'c_phi'; end
-    % if strcmp(param,'mufw'); param = 'c_muf'; end
+    if P.flag_adjust == 1
+        if strcmp(param,'phiW'); param = 'c_phi'; end
+        if strcmp(param,'mufw'); param = 'c_muf'; end
+    end
     pmin(iP,1) = P.([param,'_lower']);
     pmax(iP,1) = P.([param,'_upper']);
     pmean(iP,1) = P.(param);
 end
 
 % PRCC config
-NS = 30000; % number of samples, min = k+1, 100~1000
+NS = 100000; % number of samples, min = k+1, 100~1000
 k = length(lP_list); % # of POIs
 % Pre-allocation
 Size_timepts = length(time_points); % # of time points to check QOI value;
@@ -34,25 +37,21 @@ Y = NaN(NS,Size_timepts,Size_QOI);  % For each model evaluation, the QOI has dim
 
 %% Generate parameter samples, stored in matrix X
 direc = 'Results/SA/SA_PRCC/';
-% if strcmp(lQ,'bifur_region')
-    sample_file_name = [direc,'PRCC_sample_',num2str(NS),'_',num2str(k),'_unif.mat'];
-% else
-%     sample_file_name = [direc,'PRCC_sample_',num2str(NS),'_',num2str(k),'.mat'];
-% end
+sample_file_name = [direc,'PRCC_sample_',num2str(NS),'_',num2str(k),'.mat'];
 if ~exist(sample_file_name,'file')
-    disp('generate parameter samples...')
+    disp('generate raw samples...')
     LHS_raw = lhsdesign(NS,k); % uniform random draw with LHS sampling in [0,1]
-    % if strcmp(lQ,'bifur_region')
-        X = parameterdist(LHS_raw,pmax,pmin,pmean,1,'unif'); % 'unif' 'triangular'
-    % else
-    %     X = parameterdist(LHS_raw,pmax,pmin,pmean,1,'triangular'); % 'unif' 'triangular'
-    % end
-    % X = adjust_samples_PRCC(X,lP_list); % adjust samples so that it fits the biological assumptions on fitness cost
-    % save(sample_file_name,'X')
-    disp('generate parameter samples... DONE')
+    save(sample_file_name,'LHS_raw')
+    disp('generate raw samples...DONE')
 else
-    disp('load parameter samples...')
-    load([direc,'PRCC_sample_',num2str(NS),'_',num2str(k),'.mat'],'X')
+    disp('load raw samples...')
+    load(sample_file_name,'LHS_raw')
+end
+label_dist = 'unif'; % 'unif', 'triangular'
+X = parameterdist(LHS_raw,pmax,pmin,pmean,1,'unif'); % 'unif' 'triangular'
+disp('parameter transform DONE...')
+if P.flag_adjust == 1
+    X = adjust_samples_PRCC(X,lP_list); % adjust samples so that it fits the biological assumptions on fitness cost
 end
 save([direc,'parameters_P_baseline.mat'],'P')
 tic
@@ -136,6 +135,7 @@ end
 
 %%
 figure_setups;
-hist(Y)
+C = categorical(Y,[2,6,5,4,3],{'R1(2ss)','R2(6ss)','R3a(5ss)','R3b(4ss)','R4(3ss)'});
+h = histogram(C);
 title(['max=',num2str(max(Y)),', min=',num2str(min(Y))])
 

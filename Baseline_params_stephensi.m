@@ -25,15 +25,29 @@ phi_w_pr = phi_w*psi_pr/(psi_pr+mu_aw);
 P.mufu = mu_fu; % = 1/12
 P.mufu_lower = 1/17; P.mufu_upper = 1/7;
 P.mufw = mu_fw; % = 1/14
-P.mufw_lower = 1/20; P.mufw_upper = 1/8.2;
-% P.c_muf = (1/P.mufu-1/P.mufw)/(1/P.mufu); P.c_muf_lower = P.c_muf*0.7; P.c_muf_upper = P.c_muf*1.7; 
-% fraction of reduction in life span (is a negative, W slightly increase survivalship for stephensi)
-
+if isfield(P, 'flag_adjust')
+    if P.flag_adjust == 1
+        P.c_muf = (1/P.mufu-1/P.mufw)/(1/P.mufu); P.c_muf_lower = P.c_muf*0.7; P.c_muf_upper = P.c_muf*1.7;
+        % fraction of reduction in life span (is a negative, W slightly increase survivalship for stephensi)
+    elseif P.flag_adjust == 0
+        P.mufw_lower = 1/20; P.mufw_upper = 1/8.2;
+    else
+        keyboard
+    end
+end
 P.phiU = phi_u_pr; P.phiU_lower = 1.7; P.phiU_upper = 4.2;
 P.phiW = phi_w_pr;
-P.phiW_lower = 1; P.phiW_upper = 2.4;
-% P.c_phi = (P.phiU/P.mufu-P.phiW/P.mufw)/(P.phiU/P.mufu); P.c_phi_lower = P.c_phi*0.7; P.c_phi_upper = P.c_phi*1.7; 
-% fraction of reduction in the offspring
+
+if isfield(P, 'flag_adjust')
+    if P.flag_adjust == 1
+        P.c_phi = (P.phiU/P.mufu-P.phiW/P.mufw)/(P.phiU/P.mufu); P.c_phi_lower = P.c_phi*0.7; P.c_phi_upper = P.c_phi*1.7;
+        % fraction of reduction in the offspring
+    elseif P.flag_adjust == 0
+        P.phiW_lower = 1; P.phiW_upper = 2.4;
+    else
+        keyboard
+    end
+end
 
 P.vw = 0.95; P.vw_lower = 0.1; P.vw_upper = 1;
 P.vu = 1-P.vw;
