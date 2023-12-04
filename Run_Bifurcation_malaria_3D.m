@@ -7,11 +7,17 @@ format long
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
 P.vw = 0.95; P.vu = 1- P.vw;
+P.alpha = 0.0035;
+[r,R0m] = Cal_phiW_R0m(P);
+
+%%
 % Sampling
 phiW_min = P.mufw/(P.vw*P.bf);
+% for baseline bifurcation plot (region 3a)
 phiW_list = [linspace(phiW_min,0.420999557717824,3),linspace(0.420999557717824,0.498673153471915,5), ...
     linspace(0.498673153471915,1.160720919946926,10), linspace(1.16191258002403,2.211189739053516,10), linspace(2.211410880141531,3,5), 100];
-
+% for generating region 3b scenario
+% phiW_list = [linspace(phiW_min,0.504202,3), linspace(0.51,0.568952,5),linspace(0.568952,1.08801,10),linspace(1.08801,2.65369,5),linspace(2.66,3.36673,5),linspace(3.383458646616541,4,3),100];
 %% Run steady state calculations
 tic
 Minf = NaN(6,length(phiW_list));
@@ -39,15 +45,18 @@ for iphi = 1:length(phiW_list)
     R0M(6,iphi) = R0M(3,iphi);
     SS_mat_old = SS_mat;
 end
-% save('Bifurcation_3D.mat')
+% save('Bifurcation_3D_reg3b.mat')
 toc
 %% plotting
 load('Bifurcation_3D.mat')
+% load('Bifurcation_3D_reg3b.mat')
 f = figure_setups; hold on;
 set(f,'WindowState','maximized') % make the plot full screen
 % set(f,'Renderer','painters')
 view([65,45])
-axis([0 1 0 1.2 0 0.7])
+axis([0 1 0 1.5 0 0.7])
+% view([70,30])
+% axis([0 1 0 1.5 0 0.7])
 xlabel('Wolbachia prevalence')
 ylabel('$\mathcal{R}_0^w$')
 zlabel('Malaria prevalence $(A_H+D_H)$')
@@ -59,7 +68,7 @@ for iline = 1:6
     group2 = find((Stab(iline,:,1)==1).*(1-Stab(iline,:,2)==1));
     group3 = find((1-Stab(iline,:,1)==1).*(Stab(iline,:,2)==1));
     group4 = find((1-Stab(iline,:,1)==1).*(1-Stab(iline,:,2)==1));   
-    plot3(Winf(iline,group1),R0w(group1),Minf(iline,group1),'-','Color',[0 0.4470 0.7410],'DisplayName',legend_list{1})
+    plot3(Winf(iline,group1),R0w(group1),Minf(iline,group1),'-','Color',[0 0.4470 0.7410],'DisplayName',legend_list{1})    
     plot3(Winf(iline,group2),R0w(group2),Minf(iline,group2),'-.','Color',[0.4660 0.6740 0.1880],'DisplayName',legend_list{2})
     plot3(Winf(iline,group3),R0w(group3),Minf(iline,group3),'--','Color',[0.8500 0.3250 0.0980],'DisplayName',legend_list{3})
     plot3(Winf(iline,group4),R0w(group4),Minf(iline,group4),':','Color',[0.6350 0.0780 0.1840],'DisplayName',legend_list{4})
@@ -67,35 +76,35 @@ end
 ll = legendUnq(f);
 ll = ll([3,4,1,2]);
 legend(ll,'Location','east')
-print(gcf,'-vector', '-depsc', 'Bifurcation_system.eps')
+% print(gcf,'-vector', '-depsc', 'Bifurcation_system_reg3b.eps')
 
 
 %% plotting
-f = figure_setups; hold on;
-% set(f,'WindowState','maximized') % make the plot full screen
-% set(f,'Renderer','painters')
-view([88,20])
-axis([0 1 0.5 4.7 0 0.7])
-xlabel('Wol. prevalence')
-ylabel('$\mathcal{R}_0^m$')
-zlabel('Malaria prevalence')
-grid on
-legend_list = {'stable','Wolbachia-unstable (malaria stable)','malaria-unstable (Wolbachia-stable)',...
-    'malaria-unstable \& Wolbachia-unstable'};
-for iline = 1:6
-    group1 = find((Stab(iline,:,1)==1).*(Stab(iline,:,2)==1));
-    group2 = find((Stab(iline,:,1)==1).*(1-Stab(iline,:,2)==1));
-    group3 = find((1-Stab(iline,:,1)==1).*(Stab(iline,:,2)==1));
-    group4 = find((1-Stab(iline,:,1)==1).*(1-Stab(iline,:,2)==1));   
-    plot3(Winf(iline,group1),R0M(iline, group1),Minf(iline,group1),'-','Color',[0 0.4470 0.7410],'DisplayName',legend_list{1});
-    plot3(Winf(iline,group2),R0M(iline, group2),Minf(iline,group2),'-.','Color',[0.4660 0.6740 0.1880],'DisplayName',legend_list{2})
-    plot3(Winf(iline,group3),R0M(iline, group3),Minf(iline,group3),'--','Color',[0.8500 0.3250 0.0980],'DisplayName',legend_list{3})
-    plot3(Winf(iline,group4),R0M(iline, group4),Minf(iline,group4),':','Color',[0.6350 0.0780 0.1840],'DisplayName',legend_list{4});
-end
-ll = legendUnq(f);
-ll = ll([3,4,1,2]);
-legend(ll,'Location','best')
-legend off
+% f = figure_setups; hold on;
+% % set(f,'WindowState','maximized') % make the plot full screen
+% % set(f,'Renderer','painters')
+% view([88,20])
+% axis([0 1 0.5 4.7 0 0.7])
+% xlabel('Wol. prevalence')
+% ylabel('$\mathcal{R}_0^m$')
+% zlabel('Malaria prevalence')
+% grid on
+% legend_list = {'stable','Wolbachia-unstable (malaria stable)','malaria-unstable (Wolbachia-stable)',...
+%     'malaria-unstable \& Wolbachia-unstable'};
+% for iline = 1:6
+%     group1 = find((Stab(iline,:,1)==1).*(Stab(iline,:,2)==1));
+%     group2 = find((Stab(iline,:,1)==1).*(1-Stab(iline,:,2)==1));
+%     group3 = find((1-Stab(iline,:,1)==1).*(Stab(iline,:,2)==1));
+%     group4 = find((1-Stab(iline,:,1)==1).*(1-Stab(iline,:,2)==1));   
+%     plot3(Winf(iline,group1),R0M(iline, group1),Minf(iline,group1),'-','Color',[0 0.4470 0.7410],'DisplayName',legend_list{1});
+%     plot3(Winf(iline,group2),R0M(iline, group2),Minf(iline,group2),'-.','Color',[0.4660 0.6740 0.1880],'DisplayName',legend_list{2})
+%     plot3(Winf(iline,group3),R0M(iline, group3),Minf(iline,group3),'--','Color',[0.8500 0.3250 0.0980],'DisplayName',legend_list{3})
+%     plot3(Winf(iline,group4),R0M(iline, group4),Minf(iline,group4),':','Color',[0.6350 0.0780 0.1840],'DisplayName',legend_list{4});
+% end
+% ll = legendUnq(f);
+% ll = ll([3,4,1,2]);
+% legend(ll,'Location','best')
+% legend off
 % print(gcf,'-vector', '-depsc', 'M_bifur2.eps')
 
 % %% solution trajectory

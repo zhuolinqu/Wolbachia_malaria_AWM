@@ -25,7 +25,7 @@ phi_w_pr = phi_w*psi_pr/(psi_pr+mu_aw);
 P.mufu = mu_fu; % = 1/12
 P.mufu_lower = 1/17; P.mufu_upper = 1/7;
 P.mufw = mu_fw; % = 1/14
-if isfield(P, 'flag_adjust')
+if isfield(P, 'flag_adjust') % flag if want to ajust parameter range (for SA)
     if P.flag_adjust == 1
         P.c_muf = (1/P.mufu-1/P.mufw)/(1/P.mufu); P.c_muf_lower = P.c_muf*0.7; P.c_muf_upper = P.c_muf*1.7;
         % fraction of reduction in life span (is a negative, W slightly increase survivalship for stephensi)
