@@ -83,9 +83,13 @@ P.dummy = 1; P.dummy_lower = 0.7; P.dummy_upper = 1.7; % dummy parameter for glo
 
 %%
 % figure_setups; hold on
-% xx = 1:0.01:15;
+% xx = 0:0.01:10;
 % [rho, phi, psi] = sigmoid_prob(xx, P);
-% plot(xx,rho)
-% plot(xx,phi)
-% plot(xx,psi)
-% legend('$\rho$', '$\phi$','$\psi$')
+% plot(xx,rho,'-')
+% plot(xx,phi,'--')
+% plot(xx,psi,'-.')
+% legend('$\rho(\tilde{C}_H): E_H\to A_H$',...
+%     '$\phi(\tilde{C}_H): D_H \to S_H$',...
+%     '$\psi(\tilde{C}_H): A_H \not\to D_H$','Location','se')
+% xlabel('$\tilde{C}_H$')
+% ylabel('Probability')
