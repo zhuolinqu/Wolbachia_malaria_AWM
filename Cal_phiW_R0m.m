@@ -1,6 +1,6 @@
 function [r, R0m] = Cal_phiW_R0m(P)
 % solve R0m(phiW)=1
-options = optimset('TolX',10^-3);
+options = optimset('TolX',10^-6);
 r = fminbnd(@(x) (R0m_phiW(x,P)-1).^2,0,100,options);
 R0m = R0m_phiW(r,P);
 end

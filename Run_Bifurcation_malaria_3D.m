@@ -7,17 +7,19 @@ format long
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
 P.vw = 0.95; P.vu = 1- P.vw;
-P.alpha = 0.0035;
-[r,R0m] = Cal_phiW_R0m(P);
-
+P.alpha = 0; % region 3a
+% P.alpha = 0.0035; % region 3b
+r0 = Cal_phiW_Del(P); % break point for delta=0
+r_R0w = Cal_phiW_R0w(P); % break point for R0w=1
+[r_R0m,R0m] = Cal_phiW_R0m(P); % break point for R0m=1
+r1 = min(r_R0w,r_R0m);
+r2 = max(r_R0w,r_R0m);
+ee = 10^-5;
 %%
 % Sampling
 phiW_min = P.mufw/(P.vw*P.bf);
-% for baseline bifurcation plot (region 3a)
-phiW_list = [linspace(phiW_min,0.420999557717824,3),linspace(0.420999557717824,0.498673153471915,5), ...
-    linspace(0.498673153471915,1.160720919946926,10), linspace(1.16191258002403,2.211189739053516,10), linspace(2.211410880141531,3,5), 100];
-% for generating region 3b scenario
-% phiW_list = [linspace(phiW_min,0.504202,3), linspace(0.51,0.568952,5),linspace(0.568952,1.08801,10),linspace(1.08801,2.65369,5),linspace(2.66,3.36673,5),linspace(3.383458646616541,4,3),100];
+phiW_list = [linspace(0.1,r0-ee,2),linspace(r0+ee,(r1+r0)/5-ee,10), linspace((r1+r0)/5,(r1+r0)/2-ee,10), linspace((r1+r0)/2, r1-ee,5),...
+    linspace(r1+eps,r2-ee,5), linspace(r2+ee,5,3),100];
 %% Run steady state calculations
 tic
 Minf = NaN(6,length(phiW_list));
@@ -46,9 +48,10 @@ for iphi = 1:length(phiW_list)
     SS_mat_old = SS_mat;
 end
 % save('Bifurcation_3D_reg3b.mat')
+% save('Bifurcation_3D_reg3a.mat')
 toc
 %% plotting
-load('Bifurcation_3D.mat')
+% load('Bifurcation_3D_reg3a.mat')
 % load('Bifurcation_3D_reg3b.mat')
 f = figure_setups; hold on;
 set(f,'WindowState','maximized') % make the plot full screen
