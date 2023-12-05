@@ -7,8 +7,8 @@ format long
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
 P.vw = 0.95; P.vu = 1- P.vw;
-P.alpha = 0; % region 3a
-% P.alpha = 0.0035; % region 3b
+% P.alpha = 0; % region 3a
+P.alpha = 0.0035; % region 3b
 r0 = Cal_phiW_Del(P); % break point for delta=0
 r_R0w = Cal_phiW_R0w(P); % break point for R0w=1
 [r_R0m,R0m] = Cal_phiW_R0m(P); % break point for R0m=1
@@ -52,13 +52,13 @@ end
 toc
 %% plotting
 % load('Bifurcation_3D_reg3a.mat')
-% load('Bifurcation_3D_reg3b.mat')
+load('Bifurcation_3D_reg3b.mat')
 f = figure_setups; hold on;
 set(f,'WindowState','maximized') % make the plot full screen
 % set(f,'Renderer','painters')
-view([65,45])
+% view([65,45])
 axis([0 1 0 1.5 0 0.7])
-% view([70,30])
+view([70,30])
 % axis([0 1 0 1.5 0 0.7])
 xlabel('Wolbachia prevalence')
 ylabel('$\mathcal{R}_0^w$')
@@ -80,8 +80,16 @@ ll = legendUnq(f);
 ll = ll([3,4,1,2]);
 legend(ll,'Location','east')
 % print(gcf,'-vector', '-depsc', 'Bifurcation_system_reg3b.eps')
-
-
+%% plotting legend panel
+% f = figure('Position',[244.905194567957,200.62907277076144,517.1259876758095,135.1000030899048]); 
+% hold on;
+% plot([0 100],[1 1],'-','Color',[0 0.4470 0.7410],'DisplayName',legend_list{1})
+% plot([0 100],[1 1],'-.','Color',[0.4660 0.6740 0.1880],'DisplayName',legend_list{2})
+% plot([0 100],[1 1],'--','Color',[0.8500 0.3250 0.0980],'DisplayName',legend_list{3})
+% plot([0 100],[1 1],':','Color',[0.6350 0.0780 0.1840],'DisplayName',legend_list{4})
+% legend('Location','best')
+% xticks([])
+% yticks([])
 %% plotting
 % f = figure_setups; hold on;
 % % set(f,'WindowState','maximized') % make the plot full screen
