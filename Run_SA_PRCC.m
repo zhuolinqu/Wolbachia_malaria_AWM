@@ -70,7 +70,7 @@ end
 save([direc,'PRCC_result_Ymat_',num2str(NS),'_',num2str(k),'.mat'],'Y')
 if strcmp(lQ,'bifur_region')
     sample_label = [X,Y];
-    save([direc,'PRCC_result_regions_',num2str(NS),'_',num2str(k),'.mat'],'sample_label')
+    save([direc,'PRCC_result_regions_',num2str(NS),'_',num2str(k),'.mat'],'P','lP_list','sample_label')
 end
 %% PRCC on output matrix Y
 % load([direc,'PRCC_result_Ymat_',num2str(NS),'_',num2str(k),'.mat'],'Y')
