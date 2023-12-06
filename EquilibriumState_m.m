@@ -184,7 +184,7 @@ if R0m>1 && ~isnan(NU) % if Wolbachia EE- exist
     if flag_nearby && ~isnan(sum(SS_mat_old(5,1:11),2))
         yinit = SS_mat_old(5,1:11);
     else
-        SH0 = P.gH/P.muH*0; EH0 = P.gH/P.muH*0.3; AH0 = P.gH/P.muH*0.35; DH0 = P.gH/P.muH*0.35; Ie0 = 0;
+        SH0 = P.gH/P.muH*0.1; EH0 = P.gH/P.muH*0.3; AH0 = P.gH/P.muH*0.3; DH0 = P.gH/P.muH*0.3; Ie0 = 1;
         SU0 = NU*SU_frac; EU0 = NU*EU_frac; IU0 = NU*IU_frac;
         if exist('SW_frac','var')
             SW0 = NW*SW_frac; EW0 = NW*EW_frac; IW0 = NW*IW_frac;
@@ -196,15 +196,16 @@ if R0m>1 && ~isnan(NU) % if Wolbachia EE- exist
     % solve a reduced system so that SU+EU+IU == NU and SW+EW+IW == NW are constant for mosquitoes
     yinit([8,11])=[]; 
     F_prop = @(x) Model_RHS(x,P,NU,NW);
-    options = optimoptions('fsolve','Display','none','OptimalityTolerance', 1e-25);
-    [ysol,err,~,~,~] = fsolve(F_prop,yinit,options);
+    options = optimoptions('fsolve','StepTolerance',1e-14,'Display','none','OptimalityTolerance', 1e-25);
+    [ysol,err,~,~,~] = fsolve(F_prop,sqrt(yinit),options);
     if max(max(abs(err)))>10^-5
         disp('not converged')
         keyboard
     end
-    SS_mat(5,[1,2,3,4,5,6,7,9,10]) = ysol;
-    SS_mat(5,8) = NU-ysol(6)-ysol(7);
-    SS_mat(5,11) = NW-ysol(8)-ysol(9);
+    
+    SS_mat(5,[1,2,3,4,5,6,7,9,10]) = ysol.^2;
+    SS_mat(5,8) = NU-ysol(6).^2-ysol(7).^2;
+    SS_mat(5,11) = NW-ysol(8).^2-ysol(9).^2;
 
     SS_mat(5,index_m) = 1;    
     if Wol_EEm_sta~=0; keyboard;end % wolbachia EE- should always be unstable
@@ -217,18 +218,18 @@ end
 end
 
 function dy = Model_RHS(y,P,NU,NW)
-SH = y(1);
-EH = y(2);
-AH = y(3);
-DH = y(4);
-Ie = y(5);
+SH = y(1).^2;
+EH = y(2).^2;
+AH = y(3).^2;
+DH = y(4).^2;
+Ie = y(5).^2;
 
-SU = y(6);
-EU = y(7);
+SU = y(6).^2;
+EU = y(7).^2;
 IU = NU-SU-EU;
 
-SW = y(8);
-EW = y(9);
+SW = y(8).^2;
+EW = y(9).^2;
 IW = NW-SW-EW;
 
 NH = SH + EH + AH + DH;
