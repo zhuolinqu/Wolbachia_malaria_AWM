@@ -241,7 +241,7 @@ NM = NU + NW;
 BM = P.bm*P.bh*NH/(P.bm*NM+P.bh*NH);
 BH = P.bm*P.bh*NM/(P.bm*NM+P.bh*NH);
 
-LamH = BH*P.betaM*(IU+IW)/NM;
+LamH = BH*P.betaM*(IU+P.alpha*IW)/NM;
 LamM = BM*(P.betaD*DH+P.betaA*AH)/NH;
 
 f_LamH = LamH/(P.gamma*LamH+1);
@@ -264,8 +264,8 @@ gW = P.vw*P.bf*P.phiW*(1-(NU+NW)/P.Kf)*NW;
 dSU = -LamM*SU + gU - P.mufu*SU;
 dEU = LamM*SU - P.sigma*EU - P.mufu*EU;
 % dIU = P.sigma*EU - P.mufu*IU;
-dSW = -P.alpha*LamM*SW + gW - P.mufw*SW;
-dEW = P.alpha*LamM*SW - P.sigma*EW - P.mufw*EW;
+dSW = -LamM*SW + gW - P.mufw*SW;
+dEW = LamM*SW - P.sigma*EW - P.mufw*EW;
 % dIW = P.sigma*EW - P.mufw*IW;
 
 % dy = [dSH; dEH; dAH; dDH; dIe; dSU; dEU; dIU; dSW; dEW; dIW];
