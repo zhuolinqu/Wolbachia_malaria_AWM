@@ -11,6 +11,7 @@ for j1 = 1:length(vw_vec)
     phiW_vec = 0:.05:10;
     P.vw = vw_vec(j1);
     P.vu = 1-P.vw;
+    P.ci = .9;
     for j = 1:length(phiW_vec)
         P.phiW = phiW_vec(j);
         SS_mat = EquilibriumState_w(P);
@@ -24,10 +25,10 @@ for j1 = 1:length(vw_vec)
     end
 end
 hold off
-set(gca,'fontsize',20)
+set(gca,'fontsize',18)
 xlabel('R_0^w(\phi_w)')
 ylabel('Fraction infectious')
-title('Changes in v_w (ci = 1)')
+title(sprintf('Changes in v_w (ci = %0.2f)',P.ci))
 
 %%
 P = Baseline_params_stephensi(P);
@@ -53,7 +54,7 @@ for j1 = 1:length(ci_vec)
     end
 end
 hold off
-set(gca,'fontsize',14)
+set(gca,'fontsize',18)
 xlabel('R_0^w(\phi_w)')
 ylabel('Fraction infectious')
 title('Changes in c_i (v_w = 0.95)')
