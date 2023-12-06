@@ -1,8 +1,13 @@
-function [r, R0m] = Cal_phiW_R0m(P)
+function [phiW, R0m] = Cal_phiW_R0m(P)
 % solve R0m(phiW)=1
-options = optimset('TolX',10^-6);
-r = fminbnd(@(x) (R0m_phiW(x,P)-1).^2,0,100,options);
-R0m = R0m_phiW(r,P);
+options = optimset('TolX',10^-10);
+phiW = fminbnd(@(x) (R0m_phiW(x,P)-1).^2,0,500,options);
+R0m = R0m_phiW(phiW,P);
+if (R0m-1)^2>1e-8
+    % R0m < 1 for all phiW
+    phiW = NaN;
+    R0m = NaN;
+end
 end
 
 function R0m = R0m_phiW(x,P)
