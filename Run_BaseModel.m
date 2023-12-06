@@ -1,12 +1,10 @@
 clearvars; 
 % close all; 
 clc
-
 tic
 %% Parameters
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
-P.phiW = 0.7;
 P.vw = 0.95; P.vu = 1- P.vw;
 %% Run model
 % Time frame
@@ -16,25 +14,14 @@ tspan = [0 1000];
 [R0w, G0w, G0u] = Cal_R0_wolbachia(P);
 
 SS_mat = EquilibriumState_m(P);
-yinit = SS_mat(6,1:11);
-% SH0 = 0.5*P.gH/P.muH;
-% EH0 = 0.5*P.gH/P.muH;
-% AH0 = 0;
-% DH0 = 0;
-% Ie0 = 0;
-% SU0 = 1;
-% EU0 = 0;
-% IU0 = 0;
-% SW0 = 0;% P.Kf*(1-1/G0w); 
-% EW0 = 0;
-% IW0 = 0;
-% yinit(9) = yinit(9)*0.8;
-% yinit(10) = yinit(10)*0.8;
-% yinit(11) = yinit(11)*0.8;
+% yinit(1:5) = SS_mat(4,1:5); % malaria endemic in human, no Wolbachia
+% yinit(6:8) = SS_mat(4,6:8); % malaria endemic in mosquito, no Wolbachia
+yinit = SS_mat(5,1:11);
+% yinit(9) = yinit(9)*0.8; % SW
+% yinit(10) = yinit(10)*0.8; % EW
+yinit(11) = yinit(11)*0.8; % IW
 
-% yinit = [SH0; EH0; AH0; DH0; Ie0; ...
-%         SU0; EU0; IU0; ...
-%         SW0; EW0; IW0];
+% yinit = [SH0; EH0; AH0; DH0; Ie0; SU0; EU0; IU0; SW0; EW0; IW0];
 
 options = odeset('AbsTol',1e-10,'RelTol',1e-10);
 [t,y] = ode45(@BaseModel,tspan,yinit,options,P);
@@ -58,55 +45,9 @@ NW = SW+EW+IW;
 NU = SU+EU+IU;
 NM = NW+NU;
 
-%% plot solutions in time
-figure_setups;
-subplot(2,2,1)
-plot(t,[SH EH AH DH])
-xlabel('Time, days')
-ylabel('Population (human)')
-legend('$S_H$','$E_H$','$A_H$','$D_H$')
-ylim([0 P.gH/P.muH])
+%% Plotting
+plot_solu_all_time; % plot solutions in time
+% plot_EAD_only_time; % plot diseased groups only
+% plot_sigmoids_time; % plot sigmoids
+plot_infection_time; % plot wolbachia & malaria prevalence
 
-subplot(2,2,2)
-plot(t,Ie./NH)
-xlabel('Time, days')
-ylabel('Immunity')
-legend('$I_e$')
-
-subplot(2,2,3)
-plot(t,[SU EU IU])
-xlabel('Time, days')
-ylabel('Population (mosquito)')
-legend('$S_U$','$E_U$','$I_U$')
-ylim([0 P.Kf])
-
-subplot(2,2,4)
-plot(t,[SW EW IW])
-xlabel('Time, days')
-ylabel('Population (mosquito)')
-legend('$S_W$','$E_W$','$I_W$')
-ylim([0 P.Kf])
-
-%% plot diseased groups only
-figure_setups;
-subplot(1,2,1)
-plot(t,[EH AH DH])
-xlabel('Time, days')
-ylabel('Population (human)')
-legend('$E_H$','$A_H$','$D_H$')
-subplot(1,2,2)
-plot(t,[EH AH DH]./NH)
-xlabel('Time, days')
-ylabel('Proportion (human)')
-legend('$E_H$','$A_H$','$D_H$')
-
-%% plot wolbachia prevalence
-figure_setups;
-plot(t,NW./(NW+NU))
-xlabel('Time, days')
-ylabel('Wolbachia prevalence')
-%% plot sigmoids
-figure_setups;
-[rho, phi, psi] = sigmoid_prob(Ie./NH, P);
-plot(t,rho,t,phi,t,psi)
-legend('rho','phi','psi')
