@@ -4,7 +4,7 @@ close all
 clearvars
 clc
 format long
-flag_save = 1;
+flag_save = 0;
 
 % SA setting 
 P.flag_adjust = 0; % if we want to adjust samples to satisfy constraints
@@ -68,10 +68,11 @@ for run_num = 1:NS % Loop through each parameter sample
     Y(run_num,:,:) = Q_val;
 end
 % Y(NS,Size_timepts,Size_QOI,length(pmin),NR)
-sample_label = [X,squeeze(Y)];
-if flag_save; save([direc,'PRCC_result_Ymat_',num2str(NS),'_',num2str(k),'.mat'],'Y','P','lP_list','sample_label'); end
+sample_label = [X,Y(:,1,strcmp('bifur_region',lQ))];
+if flag_save; save([direc,'PRCC_result_Ymat_',num2str(NS),'_',num2str(k),'.mat'],'Y','P','lP_list'); end
+if flag_save; save([direc,'PRCC_result_regions_',num2str(NS),'_',num2str(k),'.mat'],'Y','P','lP_list','sample_label'); end
 %% PRCC on output matrix Y
-% load([direc,'PRCC_result_Ymat_',num2str(NS),'_',num2str(k),'.mat'],'Y')
+load([direc,'PRCC_result_Ymat_',num2str(NS),'_',num2str(k),'.mat'],'Y','P','lP_list','sample_label')
 PRCC = NaN(k,Size_timepts,Size_QOI); stat_p = PRCC;
 for itime = 1:Size_timepts
     for iQOI = 1:Size_QOI
