@@ -1,3 +1,6 @@
+%% label for immunity mode
+% 'fix-low', 'fix-med','fix-high', 'dynamic'
+label_immunity = 'dynamic'; 
 %% Malaria parameters taken from Qu and Patterson et al 2023 (except as noted)
 P.bm = 0.7;
 P.bh = 5;
@@ -31,35 +34,35 @@ P.rhor2 = x(4);
 P.psis2 = x(5);
 P.psir2 = x(6);
 
-% % dynamical immunity
-P.phif0 = 0.01; P.phif1 = 1;
-P.rhof0 = 0.01; P.rhof1 = 1; 
-P.psif0 = 0.01; P.psif1 = 1; 
-
-% % Fixed immunity (max=min=constant)
-% P.phif0 = 0.5; P.phif1 = 0.5; 
-% P.rhof0 = 0.5; P.rhof1 = 0.5; 
-% P.psif0 = 0.5; P.psif1 = 0.5; 
-
-% Fixed high immunity (max=min=constant)
-% P.phif0 = 0.9; P.phif1 = 0.9; 
-% P.rhof0 = 0.9; P.rhof1 = 0.9; 
-% P.psif0 = 0.9; P.psif1 = 0.9; 
-
-% Fixed low immunity (max=min=constant)
-% P.phif0 = 0.05; P.phif1 = 0.05; 
-% P.rhof0 = 0.05; P.rhof1 = 0.05; 
-% P.psif0 = 0.05; P.psif1 = 0.05; 
+switch label_immunity
+    case 'dynamic' % dynamical immunity
+        P.phif0 = 0.01; P.phif1 = 1;
+        P.rhof0 = 0.01; P.rhof1 = 1;
+        P.psif0 = 0.01; P.psif1 = 1;
+    case 'fix-med'  % Fixed med immunity (max=min=constant)
+        P.phif0 = 0.5; P.phif1 = 0.5;
+        P.rhof0 = 0.5; P.rhof1 = 0.5;
+        P.psif0 = 0.5; P.psif1 = 0.5;
+    case 'fix-high' % Fixed high immunity (max=min=constant)
+        P.phif0 = 0.99; P.phif1 = 0.99;
+        P.rhof0 = 0.99; P.rhof1 = 0.99;
+        P.psif0 = 0.99; P.psif1 = 0.99;
+    case 'fix-low' % Fixed low immunity (max=min=constant)
+        P.phif0 = 0.05; P.phif1 = 0.05;
+        P.rhof0 = 0.05; P.rhof1 = 0.05;
+        P.psif0 = 0.05; P.psif1 = 0.05;
+    otherwise
+        keyboard
+end
 
 % sigmod parameters for comparison
-% P.phif0 = 0.329292647824602; P.phif1 = 0.329292647824602; 
-% P.rhof0 = 0.118177744193668; P.rhof1 = 0.118177744193668; 
-% P.psif0 = 0.327791291717994; P.psif1 = 0.327791291717994; 
+% P.phif0 = 0.329292647824602; P.phif1 = 0.329292647824602;
+% P.rhof0 = 0.118177744193668; P.rhof1 = 0.118177744193668;
+% P.psif0 = 0.327791291717994; P.psif1 = 0.327791291717994;
 
 [P.rho, P.phi, P.psi] = sigmoid_prob(0, P);
 
 low = 0.7; high = 1.7;
-
 P.phis2_lower = P.phis2*low; P.phis2_upper = P.phis2*high;
 P.phir2_lower = P.phir2*low; P.phir2_upper = P.phir2*high;
 P.rhos2_lower = P.rhos2*low; P.rhos2_upper = P.rhos2*high;

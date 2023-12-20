@@ -58,6 +58,6 @@ P.ci_lower = 0.1; P.ci_upper = 1;
 
 %% New parameters linking malaria and Wolbachia
 P.sigma = 1/10; P.sigma_lower = 1/14.3; P.sigma_upper = 1/5.9;
-P.alpha = 0; P.alpha_lower = 0; P.alpha_upper = 0.29;
+P.alpha = 0; P.alpha_lower = 0; P.alpha_upper = 1;
 
 end

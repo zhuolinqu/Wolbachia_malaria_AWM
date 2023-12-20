@@ -1,13 +1,14 @@
 %% global SA using PRCC
 
-% close all
+close all
 clearvars
 clc
 format long
+flag_save = 1;
 
 % SA setting 
 P.flag_adjust = 0; % if we want to adjust samples to satisfy constraints
-lQ = {'bifur_region'};  % 'R0w', 'R0m', 'bifur_region'
+lQ = {'R0w', 'R0m', 'bifur_region'};  % 'R0w', 'R0m', 'bifur_region'
 Size_QOI = length(lQ); % length of the QOI. Default = 1, unless it is an age distribution, or wants to test multiple QOIs at once
 time_points = 1;
 lP_list = {'h','rA','rD','phiU','phiW','mufu','mufw',...
@@ -53,7 +54,7 @@ disp('parameter transform DONE...')
 if P.flag_adjust == 1
     X = adjust_samples_PRCC(X,lP_list); % adjust samples so that it fits the biological assumptions on fitness cost
 end
-save([direc,'parameters_P_baseline.mat'],'P')
+if flag_save; save([direc,'parameters_P_baseline.mat'],'P'); end
 tic
 %% model evaluations
 for run_num = 1:NS % Loop through each parameter sample
@@ -67,22 +68,19 @@ for run_num = 1:NS % Loop through each parameter sample
     Y(run_num,:,:) = Q_val;
 end
 % Y(NS,Size_timepts,Size_QOI,length(pmin),NR)
-save([direc,'PRCC_result_Ymat_',num2str(NS),'_',num2str(k),'.mat'],'Y')
-if strcmp(lQ,'bifur_region')
-    sample_label = [X,Y];
-    save([direc,'PRCC_result_regions_',num2str(NS),'_',num2str(k),'.mat'],'P','lP_list','sample_label')
-end
+sample_label = [X,squeeze(Y)];
+if flag_save; save([direc,'PRCC_result_Ymat_',num2str(NS),'_',num2str(k),'.mat'],'Y','P','lP_list','sample_label'); end
 %% PRCC on output matrix Y
 % load([direc,'PRCC_result_Ymat_',num2str(NS),'_',num2str(k),'.mat'],'Y')
 PRCC = NaN(k,Size_timepts,Size_QOI); stat_p = PRCC;
 for itime = 1:Size_timepts
     for iQOI = 1:Size_QOI
-        [rho,p] = partialcorr([X Y(:,itime,iQOI)],'type','Spearman');
+        [rho,p] = partialcorr([X Y(:,itime,iQOI)],'type','Spearman','Rows','complete'); % ignore the NaN rows
         PRCC(:,itime,iQOI) = rho(1:end-1,end); % correlations between parameters and QOI
         stat_p(:,itime,iQOI) = p(1:end-1,end); % associated p-value
     end
 end
-save([direc,'PRCC_result_',num2str(NS),'_',num2str(k),'.mat'],'PRCC','stat_p','lP_list','lQ')
+if flag_save; save([direc,'PRCC_result_',num2str(NS),'_',num2str(k),'.mat'],'PRCC','stat_p','lP_list','lQ'); end
 toc
 
 %% Plotting POIs vs. QOIs: check monotonic relationships
@@ -104,15 +102,20 @@ toc
 
 %%
 %% Sorting 
-% load(['Results/vaccine_no/PRCC_result_',num2str(NS),'_',num2str(k),'.mat'],'PRCC','stat_p','lP_list','lQ')
-[~,index] = sort(abs(PRCC(1:end-1,1,1)),'descend'); % sort using QOI #11, sort all the POIs except dummy
+load([direc,'PRCC_result_',num2str(NS),'_',num2str(k),'.mat'],'PRCC','stat_p','lP_list','lQ')
+lP_order = {'alpha','mufw','betaM','rD','betaD','sigma','mufu','rA','betaA',...
+    'ci','vw','phiW','phiU',...
+    'h','de','phis2','phir2','rhos2','rhor2','psis2','psir2','cS','cE','cA','cD'};
+[~,index] = ismember(lP_order,lP_list); index = index';
+index(index==0)=[]; 
+% [~,index] = sort(abs(PRCC(1:end-1,1,2)),'descend'); 
 PRCC = PRCC([index;k],:,:); stat_p = stat_p(index,:,:,:);
 lP_list = lP_list([index;k]);
 
 %% PRCC plot 
 X = categorical(lP_list);
 X = reordercats(X,lP_list);
-palpha = 0.05; % alpha for t-test
+palpha = 0.01; % alpha for t-test
 QOI_plot = 1:length(lQ); 
 Size_QOI_plot = length(QOI_plot);
 [lP_list_name,lQ,lQ_title] = SA_output_formatting(lP_list,lQ,1);
@@ -130,7 +133,7 @@ for iQOI = 1:Size_QOI_plot
     title(['QOI = ', lQ_title{QOI_plot(iQOI)}])
     xticklabels(lP_list_name)
     grid off
-    saveas(gcf,[direc,'PRCC_result_',num2str(NS),'_',num2str(k),'_',lQ{QOI_plot(iQOI)},'.eps'],'epsc')
+    if flag_save; saveas(gcf,[direc,'PRCC_result_',num2str(NS),'_',num2str(k),'_',lQ{QOI_plot(iQOI)},'.eps'],'epsc'); end
 end
 
 %%
