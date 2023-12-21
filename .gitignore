@@ -4,3 +4,4 @@
 *.fig
 Bifurcation_3D.mat
 Results/*
+*.asv
