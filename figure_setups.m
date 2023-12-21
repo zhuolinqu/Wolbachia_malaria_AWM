@@ -1,7 +1,7 @@
 function fig = figure_setups()
 
-fig = figure('Position', [100, 55,900, 700]);
-
+% fig = figure('Position', [100, 55,900, 700]);
+fig = figure('Position',[444   310   400   300]); 
 global skip_pt
 global colour_r1 colour_r2 colour_r3 colour_r4
 global colour_blue colour_red colour_yellow
@@ -17,8 +17,6 @@ set(0,'defaulttextinterpreter','latex');
 set(0,'defaultLegendAutoUpdate','off');
 
 grid on
-
-
 box on
 
 skip_pt = 1; % for sparser plotting
