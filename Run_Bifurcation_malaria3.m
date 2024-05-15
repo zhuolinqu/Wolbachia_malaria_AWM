@@ -40,9 +40,11 @@ ylabel('Malaria prevalence')
 xlim([R0m_min R0m_max])
 legend('Location','nw')
 
+text(0.6,0.025,'DFE')
+text(2.3,0.3,'EE')
+
 function [R0m, SS_mat] = EquilibriumState_m_row4(P)
 [R0w, G0w, G0u] = Cal_R0_wolbachia(P);
-
 if G0u<1 || G0w<1
     disp('mosquito extinction')
     % mosquito extinction, check parameter range!
