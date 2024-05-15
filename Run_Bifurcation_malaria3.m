@@ -31,10 +31,9 @@ toc
 %%
 figure_setups;
 hold on
-ind = find(R0M>=0.99);
-plot(R0M(ind),Minf(ind),'-','DisplayName','malaria stable')
-ind = find(R0M<1);
-plot(R0M(ind),Minf(ind),'--','DisplayName','malaria unstable')
+plot(R0M,Minf,'-','DisplayName','malaria-SS stable')
+plot([1 3],[0 0],'--','DisplayName','malaria-SS unstable')
+
 xlabel('$\mathcal{R}_0^m$')
 ylabel('Malaria prevalence')
 xlim([R0m_min R0m_max])
