@@ -6,15 +6,20 @@ clc
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
 P.vw = 0.95; P.vu = 1- P.vw;
+P.alpha = 0;
+P.phiW = 0.8; Cal_R0_wolbachia(P)
+SS_mat = EquilibriumState_w(P);
+Cal_R0_malaria(SS_mat(3,1),SS_mat(3,2),P);
 tinit = 100; % [start, pre-release control]
 tconti_pre = 20; % [pre-release control, W release]
-tconti_release = 100; % [W release, post-release control]
-tconti_post = 1000-tinit-tconti_pre-tconti_release; % [post-release control, end]
-flag_malaria_control_pre = 1; % malaria control as pre-release
+% post control after 100 days and 200 days
+tconti_release = 1000; % [W release, post-release control]
+tconti_post = 5000-tinit-tconti_pre-tconti_release; % [post-release control, end]
+flag_malaria_control_pre = 0; % malaria control as pre-release
 flag_malaria_control_post = 0; % malaria control as post-release
 eff_mosquito = 0; % 0.8 efficacy = reduce wild mosquito pop by X %
-p = 0.5; % release factor
-eff_malaria = 0.8; % 0.8 efficacy = reduce malaria infection by X %
+p = 0.8; % release factor
+eff_malaria = 0; % 0.8 efficacy = reduce malaria infection by X %
 %% Baseline scenario
 tspan = 0:tinit;
 SS_matM = EquilibriumState_m(P);
