@@ -7,7 +7,8 @@ colour_mat4 = [0.4940 0.1840 0.5560];
 figure_setups; hold on
 p_w = NW./(NW+NU); % wolbachia prevalence
 p_m_human = (AH+DH)./sum(y(:,1:4),2); % malaria prevalence in human
-p_m_mosq = (EU+IU+EW+IW)./(NW+NU);
+% p_m_mosq = (EU+IU+EW+IW)./NM;
+p_m_mosq = (IU+IW)./NM; % malaria prevalence in mosquito
 plot(t,p_w,'-','Color',colour_mat1,'DisplayName','Wolbachia prev.')
 plot(t,p_m_human,'-.','Color',colour_mat2,'DisplayName','Malaria prev. in humans') % $(A_H+D_H)$
 % plot(t,p_m_human,'--','Color',colour_mat3,'DisplayName','Malaria prev. in humans') % $(A_H+D_H)$
