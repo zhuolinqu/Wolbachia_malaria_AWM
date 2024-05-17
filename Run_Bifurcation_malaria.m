@@ -1,6 +1,6 @@
 %% bifurcation plot (R0w vs. malaria prevalence)
 clearvars; 
-% close all; clc
+close all; clc
 tic
 
 %% Parameters & numerical config
@@ -33,8 +33,8 @@ for iphi = 1:length(phiW_list)
     SS_mat_old = SS_mat;
 end
 toc
-legend_list = {'stable','Wolbachia-unstable (malaria stable)','malaria-unstable (Wolbachia-stable)',...
-    'malaria-unstable \& Wolbachia-unstable'};
+legend_list = {'W-SS stable, malaria-SS stable','W-SS unstable, malaria-SS stable','W-SS stable, malaria-SS unstable',...
+    'W-SS unstable, malaria-SS unstable'};
 %%
 f = figure_setups;
 hold on
@@ -51,7 +51,7 @@ end
 ll = legendUnq(f);
 ll = ll([3,4,1,2]);
 legend(ll,'Location','east')
-xlabel('$R_0^w$')
+xlabel('$\mathcal{R}_0^w$')
 ylabel('Malaria prevalence')
 ylim([0 0.8])
 print(gcf,'-vector', '-depsc', 'Results/bifur_fixed.eps')

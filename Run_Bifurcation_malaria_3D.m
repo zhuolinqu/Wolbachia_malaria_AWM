@@ -1,14 +1,14 @@
 %% bifurcation plot (R0w vs. malaria prevalence vs. wolbachia prevalence)
 clear all
-% close all; clc
+close all; clc
 tic
 format long
 % Parameters & numerical config
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
 P.vw = 0.95; P.vu = 1- P.vw;
-% P.alpha = 0; % region 3a
-P.alpha = 0.0035; % region 3b
+P.alpha = 0; % region 3a
+% P.alpha = 0.0035; % region 3b
 r0 = Cal_phiW_Del(P); % break point for delta=0
 r_R0w = Cal_phiW_R0w(P); % break point for R0w=1
 [r_R0m,R0m] = Cal_phiW_R0m(P); % break point for R0m=1
@@ -52,17 +52,17 @@ end
 toc
 %% plotting
 % load('Bifurcation_3D_reg3a.mat')
-load('Bifurcation_3D_reg3b.mat')
+% load('Bifurcation_3D_reg3b.mat')
 f = figure_setups; hold on;
 set(f,'WindowState','maximized') % make the plot full screen
 % set(f,'Renderer','painters')
-% view([65,45])
+view([65,45])
 axis([0 1 0 1.5 0 0.7])
-view([70,30])
+% view([70,30])
 % axis([0 1 0 1.5 0 0.7])
 xlabel('Wolbachia prevalence')
 ylabel('$\mathcal{R}_0^w$')
-zlabel('Malaria prevalence $(A_H+D_H)$')
+zlabel('Malaria prevalence $(A_H\,\&\,D_H)$')
 grid on
 legend_list = {'stable','Wolbachia-unstable (malaria stable)','malaria-unstable (Wolbachia-stable)',...
     'malaria-unstable \& Wolbachia-unstable'};
