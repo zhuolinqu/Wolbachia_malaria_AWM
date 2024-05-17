@@ -6,7 +6,7 @@ tic
 %% Parameters & numerical config
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
-
+label_roman = {'I','II','III','IV','V','VI'};
 for izone = 1:6
     label_zone = izone;
     [P.vw,P.ci] = param_select(label_zone); P.vu = 1- P.vw;
@@ -41,13 +41,16 @@ for izone = 1:6
     xlabel('$\mathcal{R}_0^w$')
     ylabel('$\mathcal{R}_0^m$')
     axis([0 R0w_max 0 5])
-    title(['Zone ',num2str(label_zone)])
+    yticks([0 1 5])
+    title({['Zone ',label_roman{label_zone}],...
+        [' $c_i = ', num2str(P.ci),', v_w = ',num2str(P.vw),'$']})
+    print(gcf,'-vector', '-depsc', ['R0m_R0w_zone',num2str(label_zone),'.eps'])
 end
 %%
 function [vw,ci] = param_select(label_zone)
 switch label_zone
     case 1
-        ci = 0.5; vw = 0.6;
+        ci = 0.1; vw = 0.85;
     case 2
         ci = 0.9; vw = 0.9;
     case 3
