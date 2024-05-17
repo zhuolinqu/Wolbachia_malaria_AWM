@@ -37,7 +37,18 @@ end
 % Region 3b - 4
 % Region 4 - 3
 
-for k = [1 2 6 5 4 3]
+% Region 1 - 2 SS
+% Region 2 (2a & 2b) - 6 & 4 SS
+% Region 3 (3a & 3b) - 5 & 3 SS
+
+for igroup = 1:3
+    if igroup ==1
+        k = 2;
+    elseif igroup ==2
+        k = [6,4];
+    elseif igroup ==3
+        k = [5,3];
+    end
     for j = 1:27
         if j <= 9
             j1 = j;
@@ -52,63 +63,82 @@ for k = [1 2 6 5 4 3]
         subplot(3,3,j1)
         bin_num = 50;
         if j < 27
-            if k==1
+            if igroup==1
                 histogram(sample_label(:,j),'binwidth',(upper(j)-lower(j))/bin_num,'binlimits',[lower(j) upper(j)],'Normalization','count')
                 xlabel(labs{j})
                 set(gca,'fontsize',14)
                 xlim([lower(j) upper(j)])
                 set(gca,'xtick',[lower(j) upper(j)])
             else
-                histogram(sample_label(sample_label(:,27)==k,j),'binwidth',(upper(j)-lower(j))/bin_num,'binlimits',[lower(j) upper(j)],'Normalization','count')
+                ind = [find(sample_label(:,27)==k(1)); find(sample_label(:,27)==k(2))];
+                histogram(sample_label(ind,j),'binwidth',(upper(j)-lower(j))/bin_num,'binlimits',[lower(j) upper(j)],'Normalization','count')
+                % ylim([0 0.1])
             end
         else
-            if k==1
+            if igroup==1
                 j2 = 26;
                 histogram(sample_label(:,j2),'binwidth',(upper(j2)-lower(j2))/bin_num,'binlimits',[lower(j2) upper(j2)],'Normalization','count')
                 xlabel(labs{j2})
                 set(gca,'fontsize',14)
-                xlim([0 .1])
+                xlim([0 0.1])
                 xlim([lower(j2) upper(j2)])
                 set(gca,'xtick',[lower(j2) upper(j2)])
             else
-                histogram(sample_label(sample_label(:,27)==k,j2),'binwidth',(upper(j2)-lower(j2))/bin_num,'binlimits',[lower(j2) upper(j2)],'Normalization','count')
+                ind = [find(sample_label(:,27)==k(1)); find(sample_label(:,27)==k(2))];
+                histogram(sample_label(ind,j2),'binwidth',(upper(j2)-lower(j2))/bin_num,'binlimits',[lower(j2) upper(j2)],'Normalization','count')
+                % ylim([0 0.1])
             end
         end
 
         hold on
     end
 end
-legend('All','1','2','3a','3b','4')
+legend('1','2','3')
 
 %% Figures for manuscript
 labs_plot = {'phiU','phiW','mufu','mufw','vw','ci','alpha'};
 for iPOI = 1:length(labs_plot)
     figure_setups;
     POI_ind = find(strcmp(labs_plot{iPOI},lP_list));
-    for k = [2 6 5 4 3]
+    for igroup = 1:3
+        if igroup ==1
+            k = 2;
+        elseif igroup ==2
+            k = [6,4];
+        elseif igroup ==3
+            k = [5,3];
+        end
         j = POI_ind;
         bin_num = 50;
-        histogram(sample_label(sample_label(:,27)==k,j),'binwidth',(upper(j)-lower(j))/bin_num,'binlimits',[lower(j) upper(j)],'Normalization','count')
+        ind = [];
+        for ik = 1:length(k)
+            ind = [ind; find(sample_label(:,27)==k(ik))];
+        end
+        histogram(sample_label(ind,j),'binwidth',(upper(j)-lower(j))/bin_num,'binlimits',[lower(j) upper(j)],'Normalization','count')
         xlabel(labs{j})
         xlim([lower(j) upper(j)])
+        ylim([0 2000])
+        yticks([0 1000 2000])
+        yticklabels([0 0.01 0.02])
+        % ylim([0 0.1])
         set(gca,'xtick',[round(lower(j),2) round(upper(j),2)])
         hold on
     end
     if flag_save; saveas(gcf,[file_dir,'Histogram_result_',labs_plot{iPOI},'.eps'],'epsc'); end
 end
 
-% legend
+%% legend
 f4 = figure_setups;
-set(f4,'Position', [100, 55, 120, 250])
-for k = [ 2 6 5 4 3]
+set(f4,'Position', [100, 55, 250, 350])
+for k = [3 4 5]
     j = 4;
     bin_num = 50;
     histogram(sample_label(sample_label(:,27)==k,j),'binwidth',(upper(j)-lower(j))/bin_num,'binlimits',[lower(j) upper(j)],'Normalization','count')
-    xlim([0 .1])
+    xlim([0 0.1])
     set(gca,'xtick',[],'ytick',[])
     hold on
 end
-lgd = legend('1','2','3a','3b','4');
+lgd = legend('1','2','3');
 title(lgd,'Region')
 set(lgd,'location','east','box','off')
 if flag_save; saveas(gcf,[file_dir,'Histogram_result_legend.eps'],'epsc'); end

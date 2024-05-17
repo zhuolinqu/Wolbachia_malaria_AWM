@@ -1,14 +1,14 @@
 %% global SA using PRCC
 
-close all
+% close all
 clearvars
 clc
 format long
-flag_save = 0;
+flag_save = 1;
 
 % SA setting 
 P.flag_adjust = 0; % if we want to adjust samples to satisfy constraints
-lQ = {'R0w', 'R0m', 'bifur_region'};  % 'R0w', 'R0m', 'bifur_region'
+lQ = {'R0w', 'R0m','bifur_region'};  % 'R0w', 'R0m', 'bifur_region'
 Size_QOI = length(lQ); % length of the QOI. Default = 1, unless it is an age distribution, or wants to test multiple QOIs at once
 time_points = 1;
 lP_list = {'h','rA','rD','phiU','phiW','mufu','mufw',...
@@ -72,7 +72,7 @@ sample_label = [X,Y(:,1,strcmp('bifur_region',lQ))];
 if flag_save; save([direc,'PRCC_result_Ymat_',num2str(NS),'_',num2str(k),'.mat'],'Y','P','lP_list'); end
 if flag_save; save([direc,'PRCC_result_regions_',num2str(NS),'_',num2str(k),'.mat'],'Y','P','lP_list','sample_label'); end
 %% PRCC on output matrix Y
-load([direc,'PRCC_result_Ymat_',num2str(NS),'_',num2str(k),'.mat'],'Y','P','lP_list','sample_label')
+% load([direc,'PRCC_result_Ymat_',num2str(NS),'_',num2str(k),'.mat'],'Y','P','lP_list','sample_label')
 PRCC = NaN(k,Size_timepts,Size_QOI); stat_p = PRCC;
 for itime = 1:Size_timepts
     for iQOI = 1:Size_QOI
@@ -103,10 +103,9 @@ toc
 
 %%
 %% Sorting 
-load([direc,'PRCC_result_',num2str(NS),'_',num2str(k),'.mat'],'PRCC','stat_p','lP_list','lQ')
-lP_order = {'alpha','mufw','betaM','rD','betaD','sigma','mufu','rA','betaA',...
-    'ci','vw','phiW','phiU',...
-    'h','de','phis2','phir2','rhos2','rhor2','psis2','psir2','cS','cE','cA','cD'};
+% load([direc,'PRCC_result_',num2str(NS),'_',num2str(k),'.mat'],'PRCC','stat_p','lP_list','lQ')
+lP_order = {'h','rA','rD','betaA','betaD','phiU','phiW','mufu','mufw','vw','ci','alpha','sigma','betaM',...
+    'de','phis2','phir2','rhos2','rhor2','psis2','psir2','cS','cE','cA','cD'};
 [~,index] = ismember(lP_order,lP_list); index = index';
 index(index==0)=[]; 
 % [~,index] = sort(abs(PRCC(1:end-1,1,2)),'descend'); 
@@ -134,12 +133,22 @@ for iQOI = 1:Size_QOI_plot
     title(['QOI = ', lQ_title{QOI_plot(iQOI)}])
     xticklabels(lP_list_name)
     grid off
+    % adding dividers
+    plot([5.5 5.5],[-1.2 1.2],'k-','LineWidth',1)
+    plot([9.5 9.5],[-1.2 1.2],'k-','LineWidth',1)
+    plot([12.5 12.5],[-1.2 1.2],'k-','LineWidth',1)
+    plot([14.5 14.5],[-1.2 1.2],'k-','LineWidth',1)
+    plot([21.5 21.5],[-1.2 1.2],'k-','LineWidth',1)
     if flag_save; saveas(gcf,[direc,'PRCC_result_',num2str(NS),'_',num2str(k),'_',lQ{QOI_plot(iQOI)},'.eps'],'epsc'); end
 end
 
 %%
+% direc = 'Results/SA/SA_PRCC/';
+% load([direc,'PRCC_result_Ymat_',num2str(NS),'_',num2str(k),'.mat'],'Y','P','lP_list','sample_label')
 figure_setups;
-C = categorical(Y,[2,6,5,4,3],{'R1(2ss)','R2(6ss)','R3a(5ss)','R3b(4ss)','R4(3ss)'});
+% C = categorical(Y,[2,6,5,4,3],{'R1(2ss)','R2(6ss)','R3a(5ss)','R3b(4ss)','R4(3ss)'});
+C = categorical(Y,[2,6,4,5,3],{'R1(2ss)','R2a(6ss)','R2b(4ss)','R3a(5ss)','R3b(3ss)'});
 h = histogram(C);
-title(['max=',num2str(max(Y)),', min=',num2str(min(Y))])
+ylim([0 10^5])
+% title(['max=',num2str(max(Y)),', min=',num2str(min(Y))])
 
