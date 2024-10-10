@@ -1,5 +1,7 @@
+%% Numerical simulations on malaria control pre or post w/ wolbachia release
+% check infectious days reduced
 clearvars;
-close all;
+% close all;
 clc
 
 %% Parameters
@@ -23,7 +25,7 @@ yEE = yEE(end,:);
 %% Baseline scenario
 tspan = tinit:dt:t_Wolbachia_release;
 [tbase,ybase] = ode45(@BaseModel,tspan,yEE,options,P);
-y0 = Wol_release(ybase(end,:),p);
+y0 = Wol_release(ybase(end,:),p,yEE);
 tspan = t_Wolbachia_release:dt:t_final;
 [tbase2,ybase2] = ode45(@BaseModel,tspan,y0,options,P);
 ybase = [ybase(1:end-1,:);ybase2];
@@ -43,7 +45,7 @@ for itime = 1:length(t_malaria_control_grid)
         tspan = t_malaria_control:dt:t_Wolbachia_release;
         [t2,y2] = ode45(@BaseModel,tspan,y0,options,P);
         t = [t(1:end-1);t2]; y = [y(1:end-1,:);y2];
-        y0 = Wol_release(y2(end,:),p);
+        y0 = Wol_release(y2(end,:),p,yEE);
         tspan = t_Wolbachia_release:dt:t_final;
         [tfinal,yfinal] = ode45(@BaseModel,tspan,y0,options,P);
         t = [t(1:end-1);tfinal];
@@ -52,7 +54,7 @@ for itime = 1:length(t_malaria_control_grid)
         tspan = tinit:dt:t_Wolbachia_release;
         [t1,y1] = ode45(@BaseModel,tspan,yEE,options,P);
         t = t1; y = y1;
-        y0 = Wol_release(y1(end,:),p);
+        y0 = Wol_release(y1(end,:),p,yEE);
         tspan = t_Wolbachia_release:dt:t_malaria_control;
         [t2,y2] = ode45(@BaseModel,tspan,y0,options,P);
         t = [t(1:end-1);t2];  y = [y(1:end-1,:);y2];
@@ -65,7 +67,7 @@ for itime = 1:length(t_malaria_control_grid)
         tspan = tinit:dt:t_Wolbachia_release;
         [t1,y1] = ode45(@BaseModel,tspan,yEE,options,P);
         t = t1; y = y1;
-        y0 = Wol_release(y1(end,:),p);
+        y0 = Wol_release(y1(end,:),p,yEE);
         y0 = malaria_control(y0,eff_malaria);
         tspan = t_Wolbachia_release:dt:t_final;
         [t2,y2] = ode45(@BaseModel,tspan,y0,options,P);
@@ -82,5 +84,6 @@ days_reduced = total_inf_days_0-total_inf_days_list;
 plot(t_malaria_delay_grid,days_reduced,'-','DisplayName','\# of infection days reduced')
 [~,ind] = max(days_reduced);
 plot(t_malaria_delay_grid(ind),days_reduced(ind),'md')
-xlabel('Time since \textit{Wolbachia} release, days')
+xlabel({'Deployment time of malaria control, days','(relative to \textit{Wolbachia} release)'})
 ylabel('Infectious days reduced')
+ylim([0 12*10^5])

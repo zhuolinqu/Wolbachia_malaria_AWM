@@ -1,3 +1,4 @@
+%% Numerical simulations on malaria control pre or post w/ wolbachia release
 clearvars;
 close all;
 clc
@@ -12,7 +13,7 @@ t_malaria_control_grid = t_Wolbachia_release+t_malaria_delay_grid;
 t_final = 600; % final time for simulation
 total_inf_days_list = NaN(size(t_malaria_control_grid));
 dt = 1;
-eff_malaria = 0.8; % efficacy = reduce malaria infection by X %
+eff_malaria = 0.8; % efficacy = treat malaria infection by X %
 p = 0.5;
 %% initial condition EE
 SS_matM = EquilibriumState_m(P);

@@ -1,3 +1,5 @@
+%% Numerical simulations on malaria control pre or post w/ wolbachia release
+% check malaria peak/malaria rebound
 clearvars;
 close all;
 clc
@@ -78,10 +80,10 @@ for itime = 1:length(t_malaria_control_grid)
 end
 %% Plotting
 figure_setups; hold on
-plot(t_malaria_delay_grid,peak_list,'-','DisplayName','Peak of malaria since release')
+plot(t_malaria_delay_grid,peak_list,'-','DisplayName','Malaria peak after control')
 plot(t_malaria_delay_grid,rebound_list,'--','DisplayName','Rebound of malaria')
-xlabel('Time since \textit{Wolbachia} release, days')
-ylabel('Fraction of infection $(A_H\,\&\,D_H)$')
+xlabel({'Deployment time of malaria control, days','(relative to \textit{Wolbachia} release)'})
+ylabel('Malaria prevalence $(A_H\,\&\,D_H)$')
 legend
 
 % figure_setups; 
