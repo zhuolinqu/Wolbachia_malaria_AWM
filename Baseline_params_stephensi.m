@@ -35,7 +35,7 @@ if isfield(P, 'flag_adjust') % flag if want to ajust parameter range (for SA)
         keyboard
     end
 end
-P.phiU = phi_u_pr; P.phiU_lower = 1.7; P.phiU_upper = 4.2;
+P.phiU = phi_u_pr; P.phiU_lower = P.phiU*0.7; P.phiU_upper = P.phiU*1.7;
 P.phiW = phi_w_pr;
 
 if isfield(P, 'flag_adjust')
@@ -43,21 +43,20 @@ if isfield(P, 'flag_adjust')
         P.c_phi = (P.phiU/P.mufu-P.phiW/P.mufw)/(P.phiU/P.mufu); P.c_phi_lower = P.c_phi*0.7; P.c_phi_upper = P.c_phi*1.7;
         % fraction of reduction in the offspring
     elseif P.flag_adjust == 0
-        P.phiW_lower = 1; P.phiW_upper = 2.4;
+        P.phiW_lower = P.phiW*0.7; P.phiW_upper = P.phiW*1.7;
     else
         keyboard
     end
 end
 
-P.vw = 0.95; P.vw_lower = 0.1; P.vw_upper = 1;
+P.vw = 0.95; P.vw_lower = 0.5; P.vw_upper = 1;
 P.vu = 1-P.vw;
 P.bf = 0.5;
 P.Kf = 3e5;
 P.ci = 1; % new parameter
-P.ci_lower = 0.1; P.ci_upper = 1; 
+P.ci_lower = 0.8; P.ci_upper = 1; 
 
 %% New parameters linking malaria and Wolbachia
 P.sigma = 1/10; P.sigma_lower = 1/14.3; P.sigma_upper = 1/5.9;
-P.alpha = 0; P.alpha_lower = 0; P.alpha_upper = 1;
-
+P.alpha = 0; P.alpha_lower = 0; P.alpha_upper = 0.05;
 end
