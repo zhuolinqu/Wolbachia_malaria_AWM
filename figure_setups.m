@@ -8,8 +8,10 @@ global colour_blue colour_red colour_yellow
 global colour_mat1 colour_mat2 colour_mat3 colour_mat4 colour_mat5 colour_mat6 colour_mat7
 % larger
 % set(0,'defaultLineLineWidth',6,'defaultTextFontSize',50,'defaultTextFontname','CMU Serif Italic','defaultAxesFontSize',50,'defaultLineMarkerSize',8)
+% large
+set(0,'defaultLineLineWidth',6,'defaultTextFontSize',40,'defaultTextFontname','CMU Serif Italic','defaultAxesFontSize',40,'defaultLineMarkerSize',8)
 % regular
-set(0,'defaultLineLineWidth',6,'defaultTextFontSize',30,'defaultTextFontname','CMU Serif Italic','defaultAxesFontSize',30,'defaultLineMarkerSize',8)
+% set(0,'defaultLineLineWidth',6,'defaultTextFontSize',25,'defaultTextFontname','CMU Serif Italic','defaultAxesFontSize',30,'defaultLineMarkerSize',8)
 % smaller
 % set(0,'defaultLineLineWidth',4,'defaultTextFontSize',25,'defaultTextFontname','CMU Serif Italic','defaultAxesFontSize',25,'defaultLineMarkerSize',8)
 
@@ -42,7 +44,4 @@ colour_mat6 = [0.3010 0.7450 0.9330];
 colour_mat7 = [0.6350 0.0780 0.1840];
 
 end
-
-
-
 

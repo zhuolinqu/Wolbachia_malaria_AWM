@@ -4,7 +4,7 @@
 clearvars
 clc
 format long
-flag_save = 1;
+flag_save = 0;
 
 % SA setting 
 P.flag_adjust = 0; % if we want to adjust samples to satisfy constraints
@@ -119,8 +119,9 @@ palpha = 0.01; % alpha for t-test
 QOI_plot = 1:length(lQ); 
 Size_QOI_plot = length(QOI_plot);
 [lP_list_name,lQ,lQ_title] = SA_output_formatting(lP_list,lQ,1);
-for iQOI = 1:Size_QOI_plot
-    figure_setups; hold on
+for iQOI = 1:2%Size_QOI_plot
+    f = figure_setups; hold on
+    set(f,'Position', [100, 55,1200, 700]);
     b = bar(X,PRCC(:,1,QOI_plot(iQOI)));
     ylim([-1.1 1.1])
     xtips = b.XEndPoints;

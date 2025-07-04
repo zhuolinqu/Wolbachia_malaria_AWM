@@ -60,7 +60,7 @@ view([65,45])
 axis([0 1 0 1.5 0 0.7])
 % view([70,30])
 % axis([0 1 0 1.5 0 0.7])
-xlabel('Wolbachia prevalence')
+xlabel('\textit{Wolbachia} prevalence')
 ylabel('$\mathcal{R}_0^w$')
 zlabel('Malaria prevalence $(A_H\,\&\,D_H)$')
 grid on

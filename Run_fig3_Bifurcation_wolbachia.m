@@ -6,10 +6,10 @@ tic
 %% Parameters & numerical config
 Baseline_params_malaria;
 P = Baseline_params_stephensi(P);
-P.vw = 0.95; P.vu = 1- P.vw;
-P.ci = 0.9;
-% P.vw = 1; P.vu = 1- P.vw;
-% P.ci = 0.8;
+% P.vw = 0.95; P.vu = 1- P.vw;
+% P.ci = 0.9;
+P.vw = 1; P.vu = 1- P.vw;
+P.ci = 0.8;
 %% Sampling
 phiW_min = P.mufw/(P.vw*P.bf);
 phiW_list = [0.01:0.001:0.245, 0.245:0.001:0.25, 0.25:0.005:0.5, ...
@@ -41,7 +41,7 @@ end
 ll = legendUnq(f);
 legend(ll,'Position',[0.15,0.34,0.32,0.13])
 xlabel('$\mathcal{R}_0^w$')
-ylabel('Wolbachia prevalence')
+ylabel('\textit{Wolbachia} prevalence')
 axis([0 1.2 0 1.1])
 
 if P.vw<1
