@@ -97,8 +97,10 @@ legend('1','2','3')
 
 %% Figures for manuscript
 labs_plot = {'phiU','phiW','mufu','mufw','vw','ci','alpha'};
+% labs_plot = {'alpha'};
 for iPOI = 1:length(labs_plot)
-    figure_setups;
+    f = figure_setups;
+    set(f,'Position', [100, 55, 950, 900])
     POI_ind = find(strcmp(labs_plot{iPOI},lP_list));
     for igroup = 1:3
         if igroup ==1
@@ -115,7 +117,8 @@ for iPOI = 1:length(labs_plot)
             ind = [ind; find(sample_label(:,27)==k(ik))];
         end
         histogram(sample_label(ind,j),'binwidth',(upper(j)-lower(j))/bin_num,'binlimits',[lower(j) upper(j)],'Normalization','count')
-        xlabel(labs{j})
+        x_label = SA_output_formatting2(labs{j});
+        xlabel(x_label)
         xlim([lower(j) upper(j)])
         ylim([0 2000])
         yticks([0 1000 2000])
@@ -124,7 +127,8 @@ for iPOI = 1:length(labs_plot)
         set(gca,'xtick',[round(lower(j),2) round(upper(j),2)])
         hold on
     end
-    if flag_save; saveas(gcf,[file_dir,'Histogram_result_',labs_plot{iPOI},'.eps'],'epsc'); end
+    % if flag_save; saveas(gcf,[file_dir,'Histogram_result_',labs_plot{iPOI},'.eps'],'epsc'); end
+    if flag_save; saveas(gcf,[file_dir,'Histogram_result_',labs_plot{iPOI},'.png']); end
 end
 
 %% legend
